@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Poppins, Montserrat, Hind_Siliguri } from 'next/font/google';
 import { getDepartmentIdentity } from '@/lib/identity';
+import { SITE_URL } from '@/lib/site-url';
 import './globals.css';
 
 const poppins = Poppins({
@@ -24,7 +25,6 @@ const hindSiliguri = Hind_Siliguri({
   display: 'swap',
 });
 
-const SITE_URL = 'https://mechanical-engineering-olive.vercel.app';
 const SITE_NAME = 'Sonargaon University — Bangla Department';
 const SITE_DESCRIPTION =
   'Department of Bangla at Sonargaon University — programs, faculty, research areas, admissions, and campus services.';

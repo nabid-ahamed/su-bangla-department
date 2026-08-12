@@ -10,9 +10,10 @@ const LOGIN_LOGO_SRC = '/assets/su-logo.png';
 
 export default async function LoginPage() {
   // Department name comes from the CMS so renaming the department in
-  // /admin/department-identity updates this overline too.
+  // /admin/department-identity updates this overline too. Unlike the
+  // sidebar — which renders its own "Dept. of" overline above the
+  // name — this card shows the full name, so no prefix is stripped.
   const dept = await getDepartmentIdentity();
-  const deptLabel = dept.name.replace(/^Department of\s+/i, '');
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-gray-50 to-accent/5 p-4">
@@ -25,7 +26,7 @@ export default async function LoginPage() {
             className="h-16 w-auto mx-auto mb-4 object-contain"
           />
           <div className="text-[10px] font-semibold tracking-[0.18em] uppercase text-gray-400">
-            {deptLabel} · Admin Panel
+            {dept.name} · Admin Panel
           </div>
           <h1 className="text-2xl font-display font-bold text-primary mt-2">
             Sign in
