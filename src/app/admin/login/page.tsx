@@ -1,4 +1,5 @@
 import LoginForm from './LoginForm';
+import { getDepartmentIdentity } from '@/lib/identity';
 
 export const metadata = { title: 'Sign in' };
 
@@ -7,7 +8,12 @@ export const metadata = { title: 'Sign in' };
 // the login card needs a focused, compact mark instead.
 const LOGIN_LOGO_SRC = '/assets/su-logo.png';
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  // Department name comes from the CMS so renaming the department in
+  // /admin/department-identity updates this overline too.
+  const dept = await getDepartmentIdentity();
+  const deptLabel = dept.name.replace(/^Department of\s+/i, '');
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-gray-50 to-accent/5 p-4">
       <div className="w-full max-w-md bg-white rounded-2xl border border-gray-200 shadow-lg p-7 sm:p-9">
@@ -19,7 +25,7 @@ export default function LoginPage() {
             className="h-16 w-auto mx-auto mb-4 object-contain"
           />
           <div className="text-[10px] font-semibold tracking-[0.18em] uppercase text-gray-400">
-            Mechanical Engineering · Admin Panel
+            {deptLabel} · Admin Panel
           </div>
           <h1 className="text-2xl font-display font-bold text-primary mt-2">
             Sign in
