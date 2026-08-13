@@ -1228,6 +1228,39 @@ model CampusLocation {
 //    deploy is pixel-identical (admin can edit afterward).
 // ─────────────────────────────────────────────────────────────────
 
+// Homepage overview block — the heading + paragraph + two CTA buttons
+// + side image that sit directly under the hero. Previously hardcoded
+// in OverviewSection.tsx; made CMS-editable so department copy and
+// imagery can change without a deploy. Heading falls back to
+// DepartmentIdentity.name when left blank.
+model HomeOverview {
+  id                    String   @id @default("singleton")
+
+  // Blank heading => renderer falls back to DepartmentIdentity.name.
+  heading               String?
+  // HTML-allowed (inline <strong>/<em>) under the same author-trusted
+  // pattern as JourneyCTAContent.body; sanitized on write.
+  body                  String   @db.Text
+
+  // Side image (Cloudinary-paired), same shape as other image-bearing
+  // singletons.
+  imageUrl              String
+  imagePublicId         String?
+  imageAlt              String?
+
+  primaryCtaLabel       String
+  primaryCtaHref        String
+  primaryCtaExternal    Boolean  @default(false)
+
+  secondaryCtaLabel     String
+  secondaryCtaHref      String
+  secondaryCtaExternal  Boolean  @default(false)
+
+  updatedAt             DateTime @updatedAt
+
+  @@map("home_overview")
+}
+
 model JourneyCTAContent {
   id                   String   @id @default("singleton")
 

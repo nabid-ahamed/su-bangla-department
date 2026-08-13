@@ -5,15 +5,6 @@ import {motion} from 'motion/react';
 import Container from '../ui/Container';
 import {ChevronRight, Home} from 'lucide-react';
 
-// Per-image alt text now comes from DepartmentIdentity.heroImage{N}Alt
-// (Phase 3). When an admin replaces a hero image, they edit the
-// matching alt in the same form. Null alt → generic slot label.
-const FALLBACK_ALTS = [
-  'Sonargaon University Mechanical Engineering Department',
-  'Sonargaon University Mechanical Engineering students and faculty',
-  'Sonargaon University Mechanical Engineering campus',
-];
-
 type HeroSectionProps = {
   imageUrls: readonly string[];
   imageAlts: readonly (string | null)[];
@@ -22,6 +13,14 @@ type HeroSectionProps = {
   // as imageUrls; defaults to 50 per slot if a value is missing.
   imageVerticalPercents: readonly number[];
   breadcrumbLabel: string;
+  // Headline + alt fallbacks are CMS-driven so renaming the
+  // department in /admin/department-identity updates the hero.
+  // departmentName arrives as the full "Department of X"; the
+  // overline above the title already renders "Department of", so
+  // the prefix is stripped before display.
+  departmentName: string;
+  shortCode: string;
+  universityName: string;
 };
 
 export default function HeroSection({
@@ -29,10 +28,14 @@ export default function HeroSection({
   imageAlts,
   imageVerticalPercents,
   breadcrumbLabel,
+  departmentName,
+  shortCode,
+  universityName,
 }: HeroSectionProps) {
+  const bareName = departmentName.replace(/^Department of\s+/i, '');
   const heroImages = imageUrls.map((src, i) => ({
     src,
-    alt: imageAlts[i] ?? FALLBACK_ALTS[i] ?? `Sonargaon University Mechanical Engineering — slide ${i + 1}`,
+    alt: imageAlts[i] ?? `${universityName} ${bareName} — slide ${i + 1}`,
     verticalPercent: imageVerticalPercents[i] ?? 50,
   }));
   const [activeImage, setActiveImage] = useState(0);
@@ -108,7 +111,7 @@ export default function HeroSection({
             transition={{ delay: 0.35, duration: 0.8 }}
             className="text-3xl md:text-5xl lg:text-6xl font-display font-bold text-white uppercase tracking-tight leading-tight drop-shadow-2xl"
           >
-            Mechanical <br /> Engineering <span className="text-button-yellow">(ME)</span>
+            {bareName} <span className="text-button-yellow">({shortCode})</span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -118,7 +121,7 @@ export default function HeroSection({
             transition={{ delay: 0.6, duration: 0.7 }}
             className="text-sm md:text-base lg:text-lg text-white/85 font-light max-w-2xl leading-relaxed"
           >
-            Shaping engineers who design tomorrow&rsquo;s machines, systems, and innovations.
+            Nurturing the language, literature, and cultural heritage of Bangla for generations to come.
           </motion.p>
         </div>
       </Container>

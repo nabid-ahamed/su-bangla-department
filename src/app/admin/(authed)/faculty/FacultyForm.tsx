@@ -258,7 +258,7 @@ export default function FacultyForm({ initial, currentDean, currentHead }: Props
             <TextField
               label="Title line 2" name="messageTitleLine2"
               defaultValue={initial?.messageTitleLine2 ?? ''}
-              placeholder='e.g. "Faculty of Science & Engineering"'
+              placeholder='e.g. "Faculty of Arts & Humanities"'
             />
           </div>
 

@@ -3,13 +3,24 @@ import { notFound } from 'next/navigation';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
 import MessageParagraphs from '@/components/sections/MessageParagraphs';
-import { getDean, getUniversityIdentity } from '@/lib/identity';
+import {
+  getDean,
+  getUniversityIdentity,
+  getDepartmentIdentity,
+} from '@/lib/identity';
 
-export const metadata = {
-  title: "Dean's Message — Faculty of Science and Engineering",
-  description:
-    "Message from the Dean of the Faculty of Science and Engineering, Sonargaon University.",
-};
+// Faculty name comes from DepartmentIdentity.facultyName so renaming
+// the faculty in /admin/department-identity flows through here.
+export async function generateMetadata() {
+  const [dept, uni] = await Promise.all([
+    getDepartmentIdentity(),
+    getUniversityIdentity(),
+  ]);
+  return {
+    title: `Dean's Message — ${dept.facultyName}`,
+    description: `Message from the Dean of the ${dept.facultyName}, ${uni.name}.`,
+  };
+}
 
 const FALLBACK_HERO = '/assets/mission-vision-hero.webp';
 

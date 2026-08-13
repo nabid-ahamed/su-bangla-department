@@ -285,6 +285,8 @@ export const uploadKindSchema = z.enum([
   'journey-cta-hero',
   // Phase 17
   'legal-hero',
+  // Homepage overview block side image
+  'home-overview-image',
 ]);
 
 export const uploadSignSchema = z.object({
@@ -1135,6 +1137,22 @@ export const campusLocationUpdateSchema = campusLocationCreateSchema;
 //  Phase 12 — JourneyCTAContent singleton (chrome section between
 //    page content and the footer; previously hardcoded).
 // ─────────────────────────────────────────────────────────────────
+
+// Homepage overview block (heading + body + image + 2 CTAs).
+// heading is optional — blank falls back to DepartmentIdentity.name.
+export const homeOverviewUpdateSchema = z.object({
+  heading:              nullableString,
+  body:                 z.string().min(1),
+  imageUrl:             z.string().min(1),
+  imagePublicId:        nullableString,
+  imageAlt:             nullableString,
+  primaryCtaLabel:      z.string().min(1).max(100),
+  primaryCtaHref:       z.string().min(1).max(500),
+  primaryCtaExternal:   z.boolean().optional().default(false),
+  secondaryCtaLabel:    z.string().min(1).max(100),
+  secondaryCtaHref:     z.string().min(1).max(500),
+  secondaryCtaExternal: z.boolean().optional().default(false),
+});
 
 export const journeyCTAContentUpdateSchema = z.object({
   heroImageUrl:         z.string().min(1),

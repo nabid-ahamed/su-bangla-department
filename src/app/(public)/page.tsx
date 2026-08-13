@@ -2,6 +2,8 @@ import dynamic from 'next/dynamic';
 import HeroSection from '@/components/sections/HeroSection';
 import {
   getDepartmentIdentity,
+  getUniversityIdentity,
+  getHomeOverview,
   getProgramsWithCta,
   getResearchAreas,
   getLabs,
@@ -45,8 +47,10 @@ const ServicesSection = dynamic(() => import('@/components/sections/ServicesSect
 });
 
 export default async function HomePage() {
-  const [dept, programs, researchAreas, labs, newsTop, eventsTop, noticesTop] = await Promise.all([
+  const [dept, uni, overview, programs, researchAreas, labs, newsTop, eventsTop, noticesTop] = await Promise.all([
     getDepartmentIdentity(),
+    getUniversityIdentity(),
+    getHomeOverview(),
     getProgramsWithCta(),
     getResearchAreas(),
     getLabs(),
@@ -65,14 +69,36 @@ export default async function HomePage() {
           dept.heroImage3VerticalPercent,
         ]}
         breadcrumbLabel={dept.breadcrumbLabel}
+        departmentName={dept.name}
+        shortCode={dept.shortCode}
+        universityName={uni.name}
       />
-      <OverviewSection />
+      {/* Falls back to sane defaults if the HomeOverview row is
+          missing (fresh DB before the migration insert runs), so the
+          homepage never renders a hole. */}
+      <OverviewSection
+        heading={overview?.heading ?? null}
+        body={
+          overview?.body ??
+          `<p>Learn more about the ${dept.name} at ${uni.name}.</p>`
+        }
+        imageUrl={overview?.imageUrl ?? '/assets/homeimg.webp'}
+        imageAlt={overview?.imageAlt ?? null}
+        primaryCtaLabel={overview?.primaryCtaLabel ?? 'Explore More'}
+        primaryCtaHref={overview?.primaryCtaHref ?? '/about/overview'}
+        primaryCtaExternal={overview?.primaryCtaExternal ?? false}
+        secondaryCtaLabel={overview?.secondaryCtaLabel ?? "Dean's Message"}
+        secondaryCtaHref={overview?.secondaryCtaHref ?? '/about/deans-message'}
+        secondaryCtaExternal={overview?.secondaryCtaExternal ?? false}
+        departmentName={dept.name}
+        universityName={uni.name}
+      />
       <ProgramsSection programs={programs} />
       <QuickLinksSection />
-      <NoticesSection notices={noticesTop} />
+      <NoticesSection notices={noticesTop} departmentName={dept.name} />
       <ResearchLabsSection labs={labs} />
       <MajorResearchSection areas={researchAreas} />
-      <EventsSection events={eventsTop} />
+      <EventsSection events={eventsTop} shortCode={dept.shortCode} />
       <NewsSection news={newsTop} />
       <ServicesSection />
     </>

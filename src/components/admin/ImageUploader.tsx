@@ -9,6 +9,7 @@ import {
   applyDeliveryTransformation,
   type ImageQualityPreset,
 } from '@/lib/image-quality';
+import { compressImageIfNeeded } from '@/lib/compress-image';
 
 type Kind =
   | 'department-logo'
@@ -41,7 +42,9 @@ type Kind =
   // Phase 12
   | 'journey-cta-hero'
   // Phase 17
-  | 'legal-hero';
+  | 'legal-hero'
+  // Homepage overview block side image
+  | 'home-overview-image';
 
 // Per-kind ideal upload size hint, surfaced under every image field
 // so admins have a target before opening the file picker. null = no
@@ -73,6 +76,7 @@ const RECOMMENDED_SIZE_BY_KIND: Record<Kind, string | null> = {
   'contact-hero':          'Landscape banner · 1920×500',
   'journey-cta-hero':      'Landscape · 1920×800',
   'legal-hero':            'Landscape banner · 1920×500',
+  'home-overview-image':   'Landscape · 1600×900',
 };
 
 export type UploadMeta = {
@@ -165,10 +169,20 @@ export default function ImageUploader({
   const showQuality = accept !== 'application/pdf';
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const original = e.target.files?.[0];
+    if (!original) return;
     setUploading(true);
     try {
+      // 0. Cloudinary rejects uploads over 10 MB. Downscale oversized
+      //    images in the browser first rather than failing after a
+      //    slow upload. Small files pass through untouched.
+      const file = await compressImageIfNeeded(original);
+      if (file !== original) {
+        toast.success(
+          `Image compressed from ${(original.size / 1048576).toFixed(1)} MB to ${(file.size / 1048576).toFixed(1)} MB before upload.`,
+        );
+      }
+
       // 1. Get signed Cloudinary params from our server
       const signRes = await fetch('/api/admin/uploads/sign', {
         method: 'POST',
@@ -188,9 +202,30 @@ export default function ImageUploader({
       fd.append('timestamp', String(sign.timestamp));
       fd.append('folder', sign.folder);
       fd.append('signature', sign.signature);
-      const upRes = await fetch(sign.uploadUrl, { method: 'POST', body: fd });
+      // Surface Cloudinary's own error text — a bare "upload failed"
+      // hides the actual cause (bad signature, file too large, format
+      // not allowed, account limits).
+      let upRes: Response;
+      try {
+        upRes = await fetch(sign.uploadUrl, { method: 'POST', body: fd });
+      } catch {
+        // fetch() rejects (rather than returning !ok) when the request
+        // never leaves the browser — CSP connect-src, an offline
+        // network, or an extension blocking the request.
+        throw new Error(
+          'Could not reach Cloudinary. Check your connection, and that api.cloudinary.com is allowed by the Content-Security-Policy.',
+        );
+      }
       if (!upRes.ok) {
-        throw new Error('Cloudinary upload failed');
+        const detail = await upRes
+          .json()
+          .then((j) => j?.error?.message as string | undefined)
+          .catch(() => undefined);
+        throw new Error(
+          detail
+            ? `Cloudinary upload failed: ${detail}`
+            : `Cloudinary upload failed (HTTP ${upRes.status})`,
+        );
       }
       const upJson = await upRes.json();
 

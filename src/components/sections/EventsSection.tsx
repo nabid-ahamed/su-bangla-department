@@ -18,6 +18,8 @@ type EventRow = {
 
 type Props = {
   events: readonly EventRow[];
+  // CMS-driven short code (e.g. "BAN") used in the section subtitle.
+  shortCode: string;
 };
 
 const EVENTS_PATH = '/student-society/events';
@@ -29,7 +31,7 @@ function formatDate(row: EventRow): string | null {
   return d.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
-export default function EventsSection({ events }: Props) {
+export default function EventsSection({ events, shortCode }: Props) {
   if (events.length === 0) return null;
 
   return (
@@ -39,7 +41,7 @@ export default function EventsSection({ events }: Props) {
           <SectionTitle
             eyebrow="Campus Engagement"
             title="Departmental Events"
-            subtitle="From hands-on workshops to breakthrough announcements—never miss what's shaping tomorrow's innovations at ME."
+            subtitle={`From literary seminars to cultural celebrations—never miss what's happening at ${shortCode}.`}
           />
           <a href={EVENTS_PATH} className="hidden md:block">
             <Button variant="ghost" className="mb-6 md:mb-8 group">

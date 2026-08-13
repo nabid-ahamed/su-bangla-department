@@ -65,6 +65,9 @@ const KIND_TO_SUBFOLDER: Record<string, string> = {
   'contact-hero':          'contact/hero',
   // Phase 12 — journey CTA hero image (between content + footer chrome).
   'journey-cta-hero':      'journey-cta/hero',
+  // Homepage overview block side image (CMS-editable since the
+  // overview section was moved out of hardcoded JSX).
+  'home-overview-image':   'home/overview',
   // Phase 17 — Privacy Policy + Terms & Conditions hero images (shared
   // Cloudinary folder; the same kind is used by both admin form fields).
   'legal-hero':            'legal/hero',

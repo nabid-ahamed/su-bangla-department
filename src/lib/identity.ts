@@ -477,6 +477,13 @@ export const getJourneyCTAContent = cache(async () => {
   return prisma.journeyCTAContent.findUnique({ where: { id: 'singleton' } });
 });
 
+// Homepage overview block (under the hero). Optional row — the
+// public section falls back to hardcoded defaults if absent, so a
+// fresh DB before the migration seed still renders.
+export const getHomeOverview = cache(async () => {
+  return prisma.homeOverview.findUnique({ where: { id: 'singleton' } });
+});
+
 // Phase 17 — LegalPagesContent singleton. One row, two public pages
 // (/privacy-policy and /terms-and-conditions). React.cache so both
 // renderers share one DB hit when rendered in the same request

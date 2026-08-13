@@ -301,9 +301,9 @@ async function backfillDepartmentIdentityAlts() {
   const row = await prisma.departmentIdentity.findUnique({ where: { id: 'singleton' } });
   if (!row) return;
   const heroAlts = [
-    'Sonargaon University Mechanical Engineering Department',
-    'Sonargaon University Mechanical Engineering students and faculty',
-    'Sonargaon University Mechanical Engineering campus',
+    'Sonargaon University Department of Bangla',
+    'Sonargaon University Department of Bangla students and faculty',
+    'Sonargaon University Department of Bangla campus',
   ];
   const updates: Record<string, string> = {};
   if (!row.heroImage1Alt) updates.heroImage1Alt = heroAlts[0];
@@ -555,16 +555,16 @@ async function seedAboutOverview() {
     create: {
       id: 'singleton',
       heroTitle:         'Department Overview',
-      heroSubtitle:      'Shaping future leaders where creativity meets technology.',
+      heroSubtitle:      'Preserving a living tradition, shaping its next generation of scholars.',
       heroOverline:      null,
       heroImageUrl:      '/assets/mission-vision-hero.webp',
       heroImagePublicId: null,
       heroImageVerticalPercent: 3,
       paragraphs: [
-        'At the heart of innovation and excellence, the Department of Mechanical Engineering is committed to shaping future leaders in the field. Explore the dynamic world of mechanical engineering, where creativity meets technology, and where ideas transform into groundbreaking solutions.',
-        'At the Department of Mechanical Engineering, we strive to shape the future of engineering by providing cutting-edge education and research opportunities. With a focus on interdisciplinary collaboration and real-world applications, our department prepares students to tackle complex challenges and contribute to the advancement of technology and society.',
-        'The main responsibility of the Department of Mechanical Engineering is to design, analyze, test, and manufacture machines and equipment. Mechanical Engineering is a vast and heterogeneous field in respect of the different types of products that the engineers work on, the industry in which they work, and the knowledge they need to become successful.',
-        'The Mechanical Engineers, who are interested in pursuing a career, have the attributes such as: the idea of what Mechanical Engineers work on, the function that Mechanical Engineers fulfill, the type of work environment, and the industries that they serve. Mechanical engineers are involved in a comprehensive variety of products like aircraft, automobile vehicles, industrial equipment and machinery, engines, turbines, pumps, mechanical handling systems, heating and cooling systems, consumer devices, and so on.',
+        'At the heart of scholarship and cultural stewardship, the Department of Bangla is committed to shaping thoughtful readers, writers, and researchers. Explore the rich world of Bangla language and literature, where a thousand-year tradition meets contemporary criticism, and where careful reading transforms into original insight.',
+        'At the Department of Bangla, we strive to advance the study of our language and its literature by providing rigorous teaching and meaningful research opportunities. With a focus on interdisciplinary inquiry and engagement with living culture, our department prepares students to interpret complex texts and contribute to the intellectual life of the nation.',
+        'The main responsibility of the Department of Bangla is to study, interpret, preserve, and teach the language and its literary heritage. Bangla studies is a vast and heterogeneous field in respect of the periods it covers, the critical methods it employs, and the knowledge students need to become successful scholars and communicators.',
+        'Graduates of Bangla, who are interested in pursuing a career, develop attributes such as: a command of literary history from the Charyapada to the contemporary, close reading and critical analysis, editorial and translation skill, and clarity in writing and speech. Graduates work in teaching and research, publishing, journalism, broadcast and digital media, translation, archives, cultural administration, and the civil service.',
       ],
     },
   });
@@ -1808,6 +1808,31 @@ async function seedCampusLocations() {
 //    footer). Seeded from the previously hardcoded JourneyCTASection.
 // ─────────────────────────────────────────────────────────────────
 
+// Homepage overview block — heading + body + side image + 2 CTAs.
+// Seeded from the previously hardcoded OverviewSection. heading is
+// left null so it falls back to DepartmentIdentity.name.
+async function seedHomeOverview() {
+  await prisma.homeOverview.upsert({
+    where: { id: 'singleton' },
+    update: {},
+    create: {
+      id: 'singleton',
+      heading: null,
+      body: 'At the heart of scholarship and cultural stewardship, the Department of Bangla is committed to shaping thoughtful readers, writers, and researchers. Explore the rich world of Bangla language and literature, where a thousand-year tradition meets contemporary criticism, and where careful study deepens our understanding of identity and society. With a focus on literary history, linguistics, folklore, and translation, our department prepares students for teaching, research, media, publishing, and public service.',
+      imageUrl: '/assets/homeimg.webp',
+      imagePublicId: null,
+      imageAlt: null,
+      primaryCtaLabel: 'Explore More',
+      primaryCtaHref: '/about/overview',
+      primaryCtaExternal: false,
+      secondaryCtaLabel: "Dean's Message",
+      secondaryCtaHref: '/about/deans-message',
+      secondaryCtaExternal: false,
+    },
+  });
+  console.log('✓ HomeOverview seeded (singleton)');
+}
+
 async function seedJourneyCTAContent() {
   await prisma.journeyCTAContent.upsert({
     where: { id: 'singleton' },
@@ -2007,6 +2032,7 @@ async function main() {
   await seedCampusLocations();
 
   console.log('\nPhase 12 journey CTA…');
+  await seedHomeOverview();
   await seedJourneyCTAContent();
 
   console.log('\nPhase 17 legal pages…');

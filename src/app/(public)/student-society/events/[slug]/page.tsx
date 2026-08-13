@@ -14,7 +14,11 @@ import {
 } from 'lucide-react';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
-import { getEventBySlug, getEventSlugs } from '@/lib/identity';
+import {
+  getEventBySlug,
+  getEventSlugs,
+  getDepartmentIdentity,
+} from '@/lib/identity';
 
 export async function generateStaticParams() {
   const slugs = await getEventSlugs();
@@ -68,7 +72,10 @@ export default async function EventDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const ev = await getEventBySlug(slug);
+  const [ev, dept] = await Promise.all([
+    getEventBySlug(slug),
+    getDepartmentIdentity(),
+  ]);
   if (!ev) notFound();
 
   const description = coerceParagraphs(ev.description);
@@ -140,7 +147,7 @@ export default async function EventDetailPage({
               <DetailRow
                 Icon={GraduationCap}
                 label="Faculty"
-                value="Faculty of Science & Engineering"
+                value={dept.facultyName}
               />
             </div>
           </aside>

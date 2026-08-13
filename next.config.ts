@@ -30,7 +30,10 @@ const cspReportOnly = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://res.cloudinary.com",
   "font-src 'self' data:",
-  "connect-src 'self'",
+  // api.cloudinary.com — the admin ImageUploader POSTs files directly
+  // from the browser to Cloudinary's signed upload endpoint, so it must
+  // be allowed here or every admin image/PDF upload fails.
+  "connect-src 'self' https://api.cloudinary.com",
   "frame-src https://www.google.com https://maps.google.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",

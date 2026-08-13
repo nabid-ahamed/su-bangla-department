@@ -17,6 +17,8 @@ type NoticeRow = {
 
 type Props = {
   notices: readonly NoticeRow[];
+  // CMS-driven department name (full "Department of X" form).
+  departmentName: string;
 };
 
 function formatDate(row: NoticeRow): string {
@@ -25,7 +27,7 @@ function formatDate(row: NoticeRow): string {
   return d.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
-export default function NoticesSection({ notices }: Props) {
+export default function NoticesSection({ notices, departmentName }: Props) {
   if (notices.length === 0) return null;
 
   return (
@@ -40,7 +42,7 @@ export default function NoticesSection({ notices }: Props) {
             Academic Notices &amp; Announcements
           </h2>
           <p className="text-white/70 text-base md:text-lg">
-            Stay up to date with the latest from the Department of Mechanical Engineering — registration, holidays, and student services.
+            Stay up to date with the latest from the {departmentName} — registration, holidays, and student services.
           </p>
         </div>
 

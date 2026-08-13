@@ -46,6 +46,7 @@ import {
   Contact,
   Building,
   Rocket,
+  LayoutTemplate,
   ShieldCheck,
   Wrench,
 } from 'lucide-react';
@@ -73,6 +74,7 @@ const PRIMARY_NAV: NavItem[] = [
   { href: '/admin/faculty',             label: 'Faculty',             icon: UsersRound },
   { href: '/admin/nav',                 label: 'Navigation',          icon: Navigation },
   { href: '/admin/footer-links',        label: 'Footer Links',        icon: PanelBottom },
+  { href: '/admin/home-overview',       label: 'Homepage Overview',   icon: LayoutTemplate },
   { href: '/admin/journey-cta',         label: 'Journey CTA',         icon: Rocket },
   { href: '/admin/legal-pages',         label: 'Legal Pages',         icon: ShieldCheck },
   { href: '/admin/page-heroes',         label: 'Page Heroes',         icon: ImageIcon },
