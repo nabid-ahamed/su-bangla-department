@@ -53,7 +53,6 @@ export default async function DashboardHome() {
 
   const [
     programsCount, researchAreasCount, facultyCount,
-    labCount, laboratoryLabCount,
     newsCount, eventCount, noticeCount, galleryCount,
     alumniCount, clubCount, faqCount, visitorCount,
     researchPaperCount, busRouteCount, syllabusCount,
@@ -70,8 +69,6 @@ export default async function DashboardHome() {
     prisma.program.count(),
     prisma.researchArea.count(),
     prisma.faculty.count(),
-    prisma.lab.count(),
-    prisma.laboratoryLab.count(),
     prisma.news.count(),
     prisma.event.count(),
     prisma.notice.count(),
@@ -130,8 +127,6 @@ export default async function DashboardHome() {
           <StatCard label="Total Programs" value={programsCount} />
           <StatCard label="Total Research Areas" value={researchAreasCount} />
           <StatCard label="Total Faculty" value={facultyCount} />
-          <StatCard label="Labs" value={labCount} />
-          <StatCard label="Laboratories" value={laboratoryLabCount} />
           <StatCard label="News Articles" value={newsCount} />
           <StatCard label="Events" value={eventCount} />
           <StatCard label="Notices" value={noticeCount} />

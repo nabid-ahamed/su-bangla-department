@@ -12,7 +12,6 @@ import bcrypt from 'bcryptjs';
 import type { Prisma } from '@prisma/client';
 import { prisma } from '../src/lib/db';
 import { faculty as facultyData } from '../src/lib/faculty-data';
-import { labs as labsData } from '../src/lib/labs-data';
 import { news as newsData } from '../src/lib/news-data';
 import { events as eventsData } from '../src/lib/events-data';
 import { notices as noticesData } from '../src/lib/notices-data';
@@ -406,8 +405,6 @@ async function seedMainNav() {
       items: [
         { name: 'Message from Head',   href: '/about/message-from-head',   displayOrder: 1 },
         { name: 'Mission & Vision',    href: '/about/mission-vision',      displayOrder: 2 },
-        { name: 'Laboratory Facility', href: '/about/laboratory-facility', displayOrder: 3 },
-        { name: 'Lab Facility',        href: '/about/lab-facility',        displayOrder: 4 },
       ],
     },
     {
@@ -700,188 +697,8 @@ async function seedAboutMechaClub() {
   console.log('✓ AboutMechaClub seeded');
 }
 
-// ════════════════════════════════════════════════════════════════
-//  PHASE 5 — Lab systems (4 models: 2 singletons + 2 multi-row)
-//  Pattern: upsert with update={} on singletons, bulk-insert-when-
-//  empty on multi-row tables (idempotent, admin edits survive).
-// ════════════════════════════════════════════════════════════════
-
-async function seedLabFacilityLanding() {
-  await prisma.labFacilityLanding.upsert({
-    where: { id: 'singleton' },
-    update: {},
-    create: {
-      id: 'singleton',
-      heroTitle:         'Lab Facilities',
-      heroOverline:      'About',
-      heroImageUrl:      '/assets/lab-hero.webp',
-      heroImagePublicId: null,
-      heroImageVerticalPercent: 25,
-      introBody:
-        'The Department of Mechanical Engineering provides international-standard education through a combination of theory and hands-on practical sessions. Our specialised laboratories are equipped with modern machinery and tools to prepare students for the global engineering market.',
-    },
-  });
-  console.log('✓ LabFacilityLanding seeded');
-}
-
-async function seedLabs() {
-  const count = await prisma.lab.count();
-  if (count > 0) {
-    console.log(`✓ Labs already seeded (${count} rows)`);
-    return;
-  }
-  // Source: src/lib/labs-data.ts. galleryPublicIds is empty for
-  // seed (local /assets/ paths have no Cloudinary id); admin
-  // upload paths populate both arrays in parallel.
-  let inserted = 0;
-  for (let i = 0; i < labsData.length; i++) {
-    const lab = labsData[i];
-    await prisma.lab.create({
-      data: {
-        slug:              lab.slug,
-        name:              lab.name,
-        tagline:           lab.tagline,
-        description:       lab.description,
-        heroImageUrl:      lab.heroImage ?? null,
-        heroImagePublicId: null,
-        gallery:           lab.gallery ?? [],
-        galleryPublicIds:  [],
-        displayOrder:      i,
-      },
-    });
-    inserted += 1;
-  }
-  console.log(`✓ Labs seeded (${inserted} rows)`);
-}
-
-async function seedLaboratoryFacilityLanding() {
-  await prisma.laboratoryFacilityLanding.upsert({
-    where: { id: 'singleton' },
-    update: {},
-    create: {
-      id: 'singleton',
-      heroTitle:         'Laboratory Facility',
-      heroOverline:      'About',
-      heroImageUrl:      '/assets/lab-hero.webp',
-      heroImagePublicId: null,
-      heroImageVerticalPercent: 25,
-      introBody:
-        'The Department of Mechanical Engineering at Sonargaon University is committed to excellence in hands-on technical education. Our laboratories serve as the hub for innovation, where students apply complex thermodynamic, fluidic, and structural theories to real-world engineering challenges.',
-      featuresOverline: 'What Sets Us Apart',
-      featuresHeading:  'Why Our Labs Matter',
-      // Source: features const in laboratory-facility/page.tsx.
-      // Icon component refs mapped to Lucide name strings:
-      //   Cog → "Cog"
-      //   ShieldCheck → "ShieldCheck"
-      //   FlaskConical → "FlaskConical"
-      features: [
-        {
-          iconName: 'Cog',
-          title: 'Industry-Standard Equipment',
-          description: 'Access to machinery used in modern manufacturing and power plants.',
-        },
-        {
-          iconName: 'ShieldCheck',
-          title: 'Safety-First Environment',
-          description: 'All labs are managed by expert technicians ensuring a secure learning environment.',
-        },
-        {
-          iconName: 'FlaskConical',
-          title: 'Research Driven',
-          description: 'Facilities support senior design projects (Capstone) and faculty-led research in renewable energy and robotics.',
-        },
-      ],
-    },
-  });
-  console.log('✓ LaboratoryFacilityLanding seeded');
-}
-
-async function seedLaboratoryLabs() {
-  const count = await prisma.laboratoryLab.count();
-  if (count > 0) {
-    console.log(`✓ LaboratoryLabs already seeded (${count} rows)`);
-    return;
-  }
-  // Source: labs const in laboratory-facility/page.tsx. iconName
-  // mapped from Icon component refs (Flame → "Flame", etc.).
-  // keyItems stored as plain string (Discovery #2 — preserved as
-  // single comma-separated sentence to match current visual).
-  const rows = [
-    {
-      iconName: 'Flame',
-      title: 'Applied Thermodynamics & Heat Engine Laboratory',
-      description:
-        'Dedicated to the study of energy conversion and thermal systems. Students explore the mechanics of power generation and the operational cycles of various engines.',
-      keyLabel: 'Key Equipment',
-      keyItems:
-        'Multi-cylinder petrol and diesel engines, steam generator models, and bomb calorimeters.',
-      focus:
-        'Internal Combustion (IC) engine performance, thermal efficiency, and combustion analysis.',
-      displayOrder: 0,
-    },
-    {
-      iconName: 'Droplets',
-      title: 'Fluid Mechanics & Hydraulic Machinery Lab',
-      description:
-        'Fluid dynamics is essential to everything from piping systems to aerospace. This lab provides the tools to measure and analyze the behaviour of liquids and gases.',
-      keyLabel: 'Key Equipment',
-      keyItems:
-        "Bernoulli's theorem apparatus, Orifice meters, Venturi meters, and centrifugal pump test rigs.",
-      focus:
-        'Flow measurement, pressure drops, and the operational characteristics of hydraulic turbines.',
-      displayOrder: 1,
-    },
-    {
-      iconName: 'Wrench',
-      title: 'Central Machine Shop & Manufacturing Lab',
-      description:
-        'A cornerstone of the department, the Machine Shop provides a rigorous introduction to industrial manufacturing processes and precision engineering.',
-      keyLabel: 'Key Equipment',
-      keyItems:
-        'Industrial-grade Lathe machines, Milling machines, Shaper machines, and Radial drilling machines.',
-      focus:
-        'Precision machining, tool geometry, and metal fabrication techniques.',
-      displayOrder: 2,
-    },
-    {
-      iconName: 'Hammer',
-      title: 'Mechanics of Materials Lab',
-      description:
-        'Ensuring structural integrity is a primary duty of a mechanical engineer. This lab allows students to test the physical limits of engineering materials.',
-      keyLabel: 'Key Equipment',
-      keyItems:
-        'Universal Testing Machine (UTM), Torsion testing machine, and Rockwell/Brinell Hardness testers.',
-      focus:
-        'Stress-strain analysis, tensile strength, elasticity, and material fatigue.',
-      displayOrder: 3,
-    },
-    {
-      iconName: 'PenTool',
-      title: 'Engineering Drawing & CAD/CAM Studio',
-      description:
-        'Bridging the gap between concept and reality, our computing studio is equipped with industry-standard software for modern design.',
-      keyLabel: 'Key Software',
-      keyItems: 'AutoCAD, SolidWorks, and ANSYS.',
-      focus:
-        '2D technical drafting, 3D solid modelling, and Finite Element Analysis (FEA).',
-      displayOrder: 4,
-    },
-    {
-      iconName: 'Zap',
-      title: 'Welding & Metal Joining Laboratory',
-      description:
-        'This lab focuses on the metallurgy and techniques of joining materials — essential for heavy industry and structural construction.',
-      keyLabel: 'Key Processes',
-      keyItems:
-        'Electric Arc welding, Oxy-Acetylene gas welding, and TIG/MIG welding setups.',
-      focus:
-        'Weld pool dynamics, structural bonding, and safety protocols in fabrication.',
-      displayOrder: 5,
-    },
-  ];
-  await prisma.laboratoryLab.createMany({ data: rows });
-  console.log(`✓ LaboratoryLabs seeded (${rows.length} rows)`);
-}
+// Lab systems (Phase 5) removed — the Bangla department has no
+// laboratories. Tables dropped in 20260813140000_drop_lab_facilities.
 
 // ════════════════════════════════════════════════════════════════
 //  PHASE 6 — Content hubs (News, Events, Notices, Gallery)
@@ -1994,10 +1811,6 @@ async function main() {
   await seedAboutMechaClub();
 
   console.log('\nPhase 5 lab systems…');
-  await seedLabFacilityLanding();
-  await seedLabs();
-  await seedLaboratoryFacilityLanding();
-  await seedLaboratoryLabs();
 
   console.log('\nPhase 6 content hubs…');
   await seedNews();

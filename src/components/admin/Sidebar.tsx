@@ -87,8 +87,6 @@ const ABOUT_PAGES_NAV: NavItem[] = [
 ];
 
 const LAB_SYSTEMS_NAV: NavItem[] = [
-  { href: '/admin/lab-facility',        label: 'Lab Facility',        icon: FlaskConical },
-  { href: '/admin/laboratory-facility', label: 'Laboratory Facility', icon: FlaskConical },
 ];
 
 const CONTENT_HUBS_NAV: NavItem[] = [

@@ -195,47 +195,10 @@ export const getAboutMechaClub = cache(async () => {
   return prisma.aboutMechaClub.findUnique({ where: { id: 'singleton' } });
 });
 
-// ─────────────────────────────────────────────────────────────────
-//  Lab systems — Phase 5 (2 singletons + 2 multi-row)
-// ─────────────────────────────────────────────────────────────────
-
-export const getLabFacilityLanding = cache(async () => {
-  return prisma.labFacilityLanding.findUnique({ where: { id: 'singleton' } });
-});
-
-export const getLabs = cache(async () => {
-  return prisma.lab.findMany({
-    orderBy: { displayOrder: 'asc' },
-    select: {
-      id: true,
-      slug: true,
-      name: true,
-      tagline: true,
-      description: true,
-      heroImageUrl: true,
-      gallery: true,
-    },
-  });
-});
-
-export const getLaboratoryFacilityLanding = cache(async () => {
-  return prisma.laboratoryFacilityLanding.findUnique({ where: { id: 'singleton' } });
-});
-
-export const getLaboratoryLabs = cache(async () => {
-  return prisma.laboratoryLab.findMany({
-    orderBy: { displayOrder: 'asc' },
-    select: {
-      id: true,
-      iconName: true,
-      title: true,
-      description: true,
-      keyLabel: true,
-      keyItems: true,
-      focus: true,
-    },
-  });
-});
+// Lab systems (Phase 5) removed — the Bangla department has no
+// laboratories. Both public pages, their admin sections and the four
+// backing tables were dropped in migration
+// 20260813140000_drop_lab_facilities.
 
 // Faculty (Phase 2). Full rows are returned — including Json
 // section content + Dean/Head message extras — so the public
