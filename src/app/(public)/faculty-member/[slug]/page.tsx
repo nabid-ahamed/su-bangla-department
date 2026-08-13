@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { Mail, Phone, IdCard, Building2, MapPin, Plus } from 'lucide-react';
+import { Mail, Phone, IdCard, Building2, MapPin, DoorOpen, Plus } from 'lucide-react';
 import type { Faculty } from '@prisma/client';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
@@ -39,6 +39,7 @@ type SectionKey =
   | 'academicQualification'
   | 'trainingExperience'
   | 'teachingArea'
+  | 'fieldOfInterest'
   | 'publications'
   | 'research'
   | 'awards'
@@ -49,6 +50,7 @@ const SECTIONS: { key: SectionKey; label: string }[] = [
   { key: 'academicQualification', label: 'Academic Qualification' },
   { key: 'trainingExperience',    label: 'Training Experience' },
   { key: 'teachingArea',          label: 'Teaching Area' },
+  { key: 'fieldOfInterest',       label: 'Field of Interest' },
   { key: 'publications',          label: 'Publication' },
   { key: 'research',              label: 'Research' },
   { key: 'awards',                label: 'Award & Scholarship' },
@@ -60,6 +62,36 @@ const PLACEHOLDER = (
   <p className="text-gray-400 italic text-sm">Information will be updated soon.</p>
 );
 
+// A section list entry: plain string, or { text, link }. When a link is
+// present the text renders with the URL as a clickable anchor below it.
+type LinkedItem = { text: string; link?: string };
+
+function isLinkedItem(v: unknown): v is LinkedItem {
+  return typeof v === 'object' && v !== null && typeof (v as { text?: unknown }).text === 'string';
+}
+
+function renderItem(item: string | LinkedItem) {
+  if (!isLinkedItem(item)) return item;
+
+  if (item.link) {
+    return (
+      <div className="space-y-1">
+        <span>{item.text}</span>
+        <a
+          href={item.link}
+          target="_blank"
+          rel="nofollow noopener noreferrer"
+          className="block text-accent underline underline-offset-2 hover:text-primary transition-colors text-[13px]"
+        >
+          {item.link}
+        </a>
+      </div>
+    );
+  }
+
+  return item.text;
+}
+
 function renderSection(value: SectionContent | null | undefined) {
   if (value == null) return PLACEHOLDER;
 
@@ -69,28 +101,40 @@ function renderSection(value: SectionContent | null | undefined) {
 
   if (!Array.isArray(value) || value.length === 0) return PLACEHOLDER;
 
-  if (typeof value[0] === 'string') {
+  // Flat list — plain strings and/or { text, link } entries.
+  if (typeof value[0] === 'string' || isLinkedItem(value[0])) {
     return (
       <ul className="list-disc list-outside pl-5 space-y-2">
-        {(value as string[]).map((item, i) => (
-          <li key={i}>{item}</li>
+        {(value as Array<string | LinkedItem>).map((item, i) => (
+          <li key={i}>{renderItem(item)}</li>
         ))}
       </ul>
     );
   }
 
+  // Grouped list — { heading, items }. `items` is defensively coerced:
+  // admin-authored JSON can omit it, and an undefined .map() here used
+  // to crash the whole page.
   return (
     <div className="space-y-6">
-      {(value as { heading: string; items: string[] }[]).map((group, gi) => (
-        <div key={gi}>
-          <h4 className="font-semibold text-primary mb-3 text-[15px]">{group.heading}</h4>
-          <ul className="list-disc list-outside pl-5 space-y-2">
-            {group.items.map((item, i) => (
-              <li key={i}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      ))}
+      {(value as { heading?: string; items?: Array<string | LinkedItem> }[]).map((group, gi) => {
+        const items = Array.isArray(group?.items) ? group.items : [];
+        if (!group?.heading && items.length === 0) return null;
+        return (
+          <div key={gi}>
+            {group?.heading && (
+              <h4 className="font-semibold text-primary mb-3 text-[15px]">{group.heading}</h4>
+            )}
+            {items.length > 0 && (
+              <ul className="list-disc list-outside pl-5 space-y-2">
+                {items.map((item, i) => (
+                  <li key={i}>{renderItem(item)}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -111,9 +155,18 @@ export default async function FacultyDetailPage({
   ]);
   if (!member) notFound();
 
-  const personalInfo = member.personalInfo as
+  const rawPersonalInfo = member.personalInfo as
     | Array<{ label: string; value: string }>
     | null;
+
+  // The Dean heads the whole faculty rather than one department, so the
+  // "Department" row is dropped for them — the Faculty row directly
+  // below already states the correct affiliation. Filtered at render
+  // time (not in the stored row) so the underlying data is preserved
+  // and this holds for whoever is dean next.
+  const personalInfo = member.isDean
+    ? rawPersonalInfo?.filter((r) => r.label.trim().toLowerCase() !== 'department') ?? null
+    : rawPersonalInfo;
 
   return (
     <PageShell title={member.name} overline="Faculty" contentClassName="bg-gray-50 py-12 md:py-20">
@@ -161,9 +214,21 @@ export default async function FacultyDetailPage({
                 {member.secondaryTitle && (
                   <p className="text-sm text-gray-600">{member.secondaryTitle}</p>
                 )}
+                {/* The Dean heads the whole faculty, not this single
+                    department — show the faculty name for them and the
+                    department name for everyone else. Both come from
+                    DepartmentIdentity so they follow the CMS. */}
                 <p className="text-sm text-gray-600 flex items-center justify-center lg:justify-start gap-2 pt-1">
                   <Building2 size={14} className="text-accent shrink-0" />
-                  {dept.name}
+                  {member.isDean ? dept.facultyName : dept.name}
+                </p>
+                {/* "(SU)" is appended here only. uni.name is kept clean
+                    in the CMS because it also feeds message signatures,
+                    image alt text and metadata, where a trailing
+                    abbreviation would read awkwardly. */}
+                <p className="text-sm text-gray-500 flex items-center justify-center lg:justify-start gap-2 pt-1">
+                  <Building2 size={14} className="text-accent shrink-0" />
+                  {uni.name.includes('(') ? uni.name : `${uni.name} (SU)`}
                 </p>
               </div>
             </div>
@@ -201,6 +266,12 @@ export default async function FacultyDetailPage({
               {member.suId && (
                 <ContactRow label="SU ID" Icon={IdCard}>
                   <span className="text-gray-700 font-mono text-xs">{member.suId}</span>
+                </ContactRow>
+              )}
+
+              {member.roomNo && (
+                <ContactRow label="Room No." Icon={DoorOpen}>
+                  <span className="text-gray-700">{member.roomNo}</span>
                 </ContactRow>
               )}
             </div>

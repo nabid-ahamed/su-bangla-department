@@ -19,8 +19,12 @@ interface PageShellProps {
   /** Small overline tag above the title. Defaults to the parent URL segment, or "Department of". */
   overline?: string;
   children: ReactNode;
-  /** Background image for the hero. Defaults to the campus shot. */
-  image?: string;
+  /**
+   * Background image for the hero. Pass null (or omit) to render the
+   * brand gradient instead of a photo — used while a page is waiting
+   * for its real hero image to be uploaded.
+   */
+  image?: string | null;
   /** CSS object-position for the hero image. e.g. 'top', 'center 30%'. Default 'center'. */
   imagePosition?: string;
   /** Tailwind classes applied to the content wrapper around children. */
@@ -32,7 +36,7 @@ export default function PageShell({
   subtitle,
   overline,
   children,
-  image = '/assets/site-school-1024x576.webp',
+  image = null,
   imagePosition = 'center',
   contentClassName = 'py-12 md:py-16',
 }: PageShellProps) {
@@ -45,27 +49,36 @@ export default function PageShell({
     <>
       {/* Hero — matches home HeroSection aesthetic (image + layered overlays + centered content) */}
       <section className="relative min-h-[440px] md:min-h-[500px] w-full overflow-hidden flex flex-col pt-[110px] md:pt-[150px] pb-16">
-        {/* Background image with Ken Burns drift */}
+        {/* Background: photo with Ken Burns drift when one is set,
+            otherwise the brand gradient. The overlay stack differs —
+            a photo needs darkening for text contrast; the gradient is
+            already dark enough and only takes the vignette. */}
         <div className="absolute inset-0 z-0">
-          <motion.div
-            initial={{ scale: 1 }}
-            animate={{ scale: 1.06 }}
-            transition={{ duration: 8, ease: 'easeOut' }}
-            className="absolute inset-0"
-          >
-            <Image
-              src={image}
-              alt=""
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover"
-              style={{ objectPosition: imagePosition }}
-            />
-          </motion.div>
-          {/* Layered overlays for depth and readability */}
-          <div className="absolute inset-0 bg-black/45" />
-          <div className="absolute inset-0 bg-gradient-to-t from-primary/85 via-primary/10 to-black/30" />
+          {image ? (
+            <>
+              <motion.div
+                initial={{ scale: 1 }}
+                animate={{ scale: 1.06 }}
+                transition={{ duration: 8, ease: 'easeOut' }}
+                className="absolute inset-0"
+              >
+                <Image
+                  src={image}
+                  alt=""
+                  fill
+                  priority
+                  sizes="100vw"
+                  className="object-cover"
+                  style={{ objectPosition: imagePosition }}
+                />
+              </motion.div>
+              {/* Layered overlays for depth and readability */}
+              <div className="absolute inset-0 bg-black/45" />
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/85 via-primary/10 to-black/30" />
+            </>
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-accent" />
+          )}
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_25%,rgba(0,0,0,0.5)_100%)]" />
         </div>
 

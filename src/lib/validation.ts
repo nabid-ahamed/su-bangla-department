@@ -213,6 +213,7 @@ export const facultyCreateSchema = z.object({
   email:          z.string().email().nullable().optional().or(z.literal('')),
   phone:          z.string().nullable().optional(),
   suId:           z.string().nullable().optional(),
+  roomNo:         z.string().nullable().optional(),
   // Optional per-faculty office address override; null/empty →
   // public page falls back to UniversityIdentity.address.
   officeAddress:  z.string().nullable().optional(),
@@ -221,6 +222,7 @@ export const facultyCreateSchema = z.object({
   academicQualification: sectionContentSchema.nullable().optional(),
   trainingExperience:    sectionContentSchema.nullable().optional(),
   teachingArea:          sectionContentSchema.nullable().optional(),
+  fieldOfInterest:       sectionContentSchema.nullable().optional(),
   publications:          sectionContentSchema.nullable().optional(),
   research:              sectionContentSchema.nullable().optional(),
   awards:                sectionContentSchema.nullable().optional(),

@@ -4,12 +4,17 @@ export type FacultyType = 'leadership' | 'full-time' | 'part-time';
  * Flexible section content. A section can be:
  *  - a plain paragraph (string)
  *  - a simple bullet list (string[])
+ *  - a bullet list where entries carry a URL ({ text, link }[]) —
+ *    used for publications / research with a DOI or journal link
  *  - grouped lists with subheadings ({ heading, items }[])
  */
+export type LinkedItem = { text: string; link?: string };
+
 export type SectionContent =
   | string
   | string[]
-  | { heading: string; items: string[] }[];
+  | LinkedItem[]
+  | { heading: string; items: Array<string | LinkedItem> }[];
 
 export interface Faculty {
   slug: string;

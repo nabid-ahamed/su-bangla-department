@@ -94,22 +94,22 @@ async function seedUniversityIdentity() {
 
 async function seedPrograms() {
   await prisma.program.upsert({
-    where: { degreeCode: 'BSc-ME' },
+    where: { degreeCode: 'BA-BAN' },
     update: {},
     create: {
-      programName: 'Undergraduate — B.Sc in Mechanical Engineering',
-      degreeCode: 'BSc-ME',
+      programName: 'Undergraduate — B.A. in Bangla',
+      degreeCode: 'BA-BAN',
       duration: '4 Years · 8 Semesters',
       description:
-        'Our flagship undergraduate program builds a strong foundation in core mechanical engineering — combining rigorous theory, modern lab practice, and design projects that prepare graduates for industry, research, and global postgraduate study.',
+        'Our flagship undergraduate program provides comprehensive knowledge of Bangla language, literature, culture, and literary traditions — tracing the ancient, medieval, and modern periods while building analytical ability, critical thinking, and research skills for academic, cultural, educational, and professional careers.',
       displayOrder: 1,
       imageUrl: '/assets/program-undergraduate.webp',
       imagePublicId: null,
       specializations: [
-        'Thermal Engineering',
-        'Design & Manufacturing',
-        'Robotics & Automation',
-        'Energy Systems',
+        'Literary History & Criticism',
+        'Linguistics & Philology',
+        'Folklore & Culture Studies',
+        'Comparative & World Literature',
       ],
       cta: 'View More',
     },
@@ -1200,18 +1200,20 @@ async function seedSyllabus() {
   // empty state when level filter = Postgraduate).
   await prisma.syllabus.create({
     data: {
-      slug:          'bsc-mechanical-engineering',
-      title:         'B.Sc. in Mechanical Engineering',
-      shortTitle:    'B. Sc. in Mechanical Engineering',
-      department:    'Mechanical Engineering',
+      slug:          'ba-bangla',
+      title:         'B.A. in Bangla',
+      shortTitle:    'B.A. in Bangla',
+      department:    'Bangla',
       level:         'Undergraduate',
+      // TODO: replace with the Bangla syllabus cover + PDF once
+      // available (upload via /admin/syllabus).
       coverUrl:      '/assets/syllabus-me-cover.webp',
       coverPublicId: null,
       pdfUrl:        '/assets/syllabus-me.pdf',
       pdfPublicId:   null,
       pdfFileName:   'syllabus-me.pdf',
       summary:
-        'Detailed course-by-course syllabus covering the four-year B.Sc. programme — Thermal Engineering, Design & Manufacturing, Automotive Engineering, Robotics & Automation, Materials Science, and Renewable Energy Systems.',
+        'Detailed course-by-course syllabus covering the four-year B.A. programme — history of Bangla literature, linguistics and philology, folklore, literary criticism, comparative and world literature, and Liberation War literature.',
       displayOrder:  0,
     },
   });
@@ -1364,10 +1366,10 @@ async function seedAdmissionRequirements() {
 }
 
 async function seedProgramFeeStructures() {
-  // Lookup B.Sc. ME by degreeCode (seeded as 'BSc-ME' by seedPrograms).
-  const program = await prisma.program.findUnique({ where: { degreeCode: 'BSc-ME' } });
+  // Lookup B.A. in Bangla by degreeCode (seeded as 'BA-BAN' by seedPrograms).
+  const program = await prisma.program.findUnique({ where: { degreeCode: 'BA-BAN' } });
   if (!program) {
-    console.log('⚠ Program BSc-ME not found — skipping ProgramFeeStructure seed');
+    console.log('⚠ Program BA-BAN not found — skipping ProgramFeeStructure seed');
     return;
   }
 

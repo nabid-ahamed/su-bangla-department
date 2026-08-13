@@ -31,6 +31,7 @@ const SECTION_FIELDS = [
   { name: 'academicQualification', label: 'Academic Qualification' },
   { name: 'trainingExperience',    label: 'Training Experience' },
   { name: 'teachingArea',          label: 'Teaching Area' },
+  { name: 'fieldOfInterest',       label: 'Field of Interest' },
   { name: 'publications',          label: 'Publication' },
   { name: 'research',              label: 'Research' },
   { name: 'awards',                label: 'Award & Scholarship' },
@@ -156,11 +157,18 @@ export default function FacultyForm({ initial, currentDean, currentHead }: Props
             defaultValue={initial?.phone ?? ''}
           />
         </div>
-        <TextField
-          label="SU ID" name="suId"
-          defaultValue={initial?.suId ?? ''}
-          placeholder="e.g. SU1603141114"
-        />
+        <div className="grid sm:grid-cols-2 gap-4">
+          <TextField
+            label="SU ID" name="suId"
+            defaultValue={initial?.suId ?? ''}
+            placeholder="e.g. SU1603141114"
+          />
+          <TextField
+            label="Room No." name="roomNo"
+            defaultValue={initial?.roomNo ?? ''}
+            placeholder="e.g. 604"
+          />
+        </div>
         <div>
           <label htmlFor="officeAddress" className="block text-sm font-medium text-gray-700 mb-1">
             Office address

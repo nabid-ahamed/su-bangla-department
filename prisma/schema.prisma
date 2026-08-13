@@ -224,6 +224,7 @@ model Faculty {
   email           String?
   phone           String?
   suId            String?
+  roomNo          String?
   // Per-faculty office address. Nullable: when null the public
   // faculty page falls back to UniversityIdentity.address (the
   // shared institutional address). Lets a member with a different
@@ -240,6 +241,7 @@ model Faculty {
   academicQualification  Json?
   trainingExperience     Json?
   teachingArea           Json?
+  fieldOfInterest        Json?
   publications           Json?
   research               Json?
   awards                 Json?
