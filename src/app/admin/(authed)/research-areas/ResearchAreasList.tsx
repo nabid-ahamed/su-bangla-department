@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, Star } from 'lucide-react';
 import { toast } from 'sonner';
 import type { ResearchArea } from '@prisma/client';
 import SortableList from '@/components/admin/SortableList';
@@ -63,7 +63,18 @@ export default function ResearchAreasList({ items: initialItems }: { items: Rese
           <div className="flex items-center gap-3 min-w-0">
             <IconPreview area={a} />
             <div className="min-w-0">
-              <div className="font-medium text-gray-900 truncate">{a.areaName}</div>
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="font-medium text-gray-900 truncate">{a.areaName}</span>
+                {/* Exactly one row is the featured card on the homepage.
+                    Surfaced here so it is visible without opening each
+                    record to check. */}
+                {a.isFeatured && (
+                  <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-accent/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent">
+                    <Star size={10} className="fill-accent" />
+                    Featured
+                  </span>
+                )}
+              </div>
               <div className="text-xs text-gray-500">
                 {a.iconUrl ? 'Uploaded image' : `Lucide · ${a.iconName ?? '—'}`}
               </div>

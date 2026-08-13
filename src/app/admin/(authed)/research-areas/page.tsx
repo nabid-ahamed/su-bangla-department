@@ -14,6 +14,7 @@ export default async function ResearchAreasPage() {
   const areas = await prisma.researchArea.findMany({
     orderBy: { displayOrder: 'asc' },
   });
+  const featured = areas.find((a) => a.isFeatured);
 
   return (
     <div className="space-y-6 max-w-3xl">
@@ -24,6 +25,15 @@ export default async function ResearchAreasPage() {
             {areas.length} area{areas.length === 1 ? '' : 's'}
             {areas.length > 1 && ' · drag to reorder'}
           </p>
+          {/* Name the featured row up front — its image and copy drive the
+              large card on the homepage, which is not obvious from the
+              list alone. */}
+          {featured && (
+            <p className="mt-1 text-xs text-gray-500">
+              <span className="font-semibold text-accent">{featured.areaName}</span> is the
+              featured card on the homepage — edit it to change that card&apos;s image and text.
+            </p>
+          )}
         </div>
         <Link
           href="/admin/research-areas/new"

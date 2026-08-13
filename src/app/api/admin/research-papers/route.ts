@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
+import { buildResearchPaperData } from '@/lib/research-paper-data';
 import { requireUser, withErrorHandling, readJson } from '@/lib/auth-server';
 import { researchPaperCreateSchema } from '@/lib/validation';
 
@@ -15,6 +16,6 @@ export const POST = withErrorHandling(async (request) => {
   const parsed = researchPaperCreateSchema.parse(body);
   const last = await prisma.researchPaper.findFirst({ orderBy: { displayOrder: 'desc' }, select: { displayOrder: true } });
   const displayOrder = (last?.displayOrder ?? -1) + 1;
-  const paper = await prisma.researchPaper.create({ data: { ...parsed, displayOrder } });
+  const paper = await prisma.researchPaper.create({ data: { ...buildResearchPaperData(parsed), displayOrder } });
   return NextResponse.json({ paper }, { status: 201 });
 });

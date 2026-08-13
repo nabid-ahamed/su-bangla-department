@@ -709,12 +709,38 @@ export const visitorUpdateSchema = visitorCreateSchema;
 
 // ─── ResearchPaper ──────────────────────────────────────────────
 
+// coAuthors: [{ name, role?, facultySlug? }]. The action passes the
+// literal 'INVALID' when the textarea held unparseable JSON, which this
+// rejects so the admin sees an error instead of losing the data.
+const coAuthorsSchema = z
+  .array(
+    z.object({
+      name: z.string().min(1),
+      role: z.string().nullable().optional(),
+      facultySlug: z.string().nullable().optional(),
+    }),
+  )
+  .nullable()
+  .optional();
+
 export const researchPaperCreateSchema = z.object({
   title:           z.string().min(1),
   authors:         z.string().min(1),
   area:            z.string().min(1),
   date:            optionalNullableString,
   publicationYear: z.number().int().min(1900).max(2100).nullable().optional(),
+
+  authorRole:      optionalNullableString,
+  facultySlug:     optionalNullableString,
+  coAuthors:       coAuthorsSchema,
+  link:            optionalNullableString,
+  linkLabel:       optionalNullableString,
+  publisher:       optionalNullableString,
+  indexing:        optionalNullableString,
+  quartile:        optionalNullableString,
+  metrics:         optionalNullableString,
+  authorPosition:  optionalNullableString,
+  publicationType: optionalNullableString,
 });
 
 export const researchPaperUpdateSchema = researchPaperCreateSchema;

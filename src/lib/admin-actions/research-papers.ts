@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db';
+import { buildResearchPaperData } from '@/lib/research-paper-data';
 import { getSession } from '@/lib/auth-server';
 import { researchPaperCreateSchema, researchPaperUpdateSchema } from '@/lib/validation';
 
@@ -36,6 +37,35 @@ function revalidateResearchPaperSurfaces() {
   revalidatePath('/', 'layout');
 }
 
+/**
+ * Co-authors arrive as parallel indexed fields — coAuthorName.0,
+ * coAuthorRole.0, coAuthorSlug.0, … — so the editor can add and remove
+ * rows without JSON in a textarea. Entries with no name are dropped,
+ * which is how a blank row the admin left behind gets discarded.
+ */
+function readCoAuthors(formData: FormData) {
+  // Collect the indices first: keys() yields one entry per field, so a
+  // set keeps each row once, and sorting numerically preserves the
+  // order the admin arranged them in (10 must not sort before 2).
+  const indices = new Set<number>();
+  for (const key of formData.keys()) {
+    const m = key.match(/^coAuthorName\.(\d+)$/);
+    if (m) indices.add(Number(m[1]));
+  }
+
+  const out: { name: string; role: string | null; facultySlug: string | null }[] = [];
+  for (const i of [...indices].sort((a, b) => a - b)) {
+    const name = getStr(formData, `coAuthorName.${i}`);
+    if (!name) continue;
+    out.push({
+      name,
+      role: emptyToNull(formData.get(`coAuthorRole.${i}`)),
+      facultySlug: emptyToNull(formData.get(`coAuthorSlug.${i}`)),
+    });
+  }
+  return out;
+}
+
 function readResearchPaperRow(formData: FormData) {
   return {
     title:           getStr(formData, 'title'),
@@ -43,6 +73,18 @@ function readResearchPaperRow(formData: FormData) {
     area:            getStr(formData, 'area'),
     date:            emptyToNull(formData.get('date')),
     publicationYear: getIntOrNull(formData, 'publicationYear'),
+
+    authorRole:      emptyToNull(formData.get('authorRole')),
+    facultySlug:     emptyToNull(formData.get('facultySlug')),
+    coAuthors:       readCoAuthors(formData),
+    link:            emptyToNull(formData.get('link')),
+    linkLabel:       emptyToNull(formData.get('linkLabel')),
+    publisher:       emptyToNull(formData.get('publisher')),
+    indexing:        emptyToNull(formData.get('indexing')),
+    quartile:        emptyToNull(formData.get('quartile')),
+    metrics:         emptyToNull(formData.get('metrics')),
+    authorPosition:  emptyToNull(formData.get('authorPosition')),
+    publicationType: emptyToNull(formData.get('publicationType')),
   };
 }
 
@@ -62,7 +104,7 @@ export async function createResearchPaperAction(
   const displayOrder = (last?.displayOrder ?? -1) + 1;
 
   try {
-    await prisma.researchPaper.create({ data: { ...parsed.data, displayOrder } });
+    await prisma.researchPaper.create({ data: { ...buildResearchPaperData(parsed.data), displayOrder } });
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : 'Database error' };
   }
@@ -84,7 +126,7 @@ export async function updateResearchPaperAction(
   }
 
   try {
-    await prisma.researchPaper.update({ where: { id }, data: parsed.data });
+    await prisma.researchPaper.update({ where: { id }, data: buildResearchPaperData(parsed.data) });
   } catch (e: unknown) {
     if ((e as { code?: string })?.code === 'P2025') return { ok: false, error: 'Research paper not found' };
     return { ok: false, error: e instanceof Error ? e.message : 'Database error' };
