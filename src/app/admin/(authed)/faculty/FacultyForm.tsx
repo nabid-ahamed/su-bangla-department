@@ -147,16 +147,12 @@ export default function FacultyForm({ initial, currentDean, currentHead }: Props
       </Card>
 
       <Card title="Contact">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <TextField
-            label="Email" name="email" type="email"
-            defaultValue={initial?.email ?? ''}
-          />
-          <TextField
-            label="Phone" name="phone"
-            defaultValue={initial?.phone ?? ''}
-          />
-        </div>
+        {/* Phone deliberately omitted — the department does not publish
+            personal numbers. The DB column is retained but unused. */}
+        <TextField
+          label="Email" name="email" type="email"
+          defaultValue={initial?.email ?? ''}
+        />
         <div className="grid sm:grid-cols-2 gap-4">
           <TextField
             label="SU ID" name="suId"

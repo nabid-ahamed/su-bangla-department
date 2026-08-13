@@ -740,6 +740,17 @@ model ResearchPaper {
   id              String   @id @default(cuid())
   title           String   @db.Text
   authors         String   @db.Text
+  // Designation shown under `authors` on /research. Kept separate so the
+  // name alone can link to the faculty profile.
+  authorRole      String?
+  // Faculty.slug of the department member credited on this paper. Null
+  // for external co-authors or when no profile exists — the name then
+  // renders as plain text.
+  facultySlug     String?
+  // Additional authors on the same paper, rendered under the first
+  // author in the same card. Shape: [{ name, role?, facultySlug? }].
+  // A co-authored paper is ONE publication, so it gets one row.
+  coAuthors       Json?
   area            String   @db.Text
   // date — free-form string. Source data has inconsistent formats:
   // "14 August 2019", "January–February 2023", "2023", "" (empty).
@@ -747,7 +758,23 @@ model ResearchPaper {
   // structured sort key.
   date            String?
   publicationYear Int?
+  link            String?  @db.Text
+  // Button text for `link`. Blank falls back to "View Publication".
+  linkLabel       String?
   displayOrder    Int
+
+  // Journal / venue metadata. All optional — books, conference papers
+  // and non-indexed publications legitimately leave these blank.
+  publisher       String?  @db.Text
+  // indexing — free-form, e.g. "ISSN 2541-8632" or "Non-Indexed".
+  indexing        String?
+  quartile        String?
+  metrics         String?
+  authorPosition  String?
+  // publicationType — "Journal", "Book", "Conference". Rendered as a
+  // pill so a reader can tell a monograph from a journal article.
+  publicationType String?
+
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 

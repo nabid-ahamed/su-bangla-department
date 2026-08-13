@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { Mail, Phone, IdCard, Building2, MapPin, DoorOpen, Plus } from 'lucide-react';
+import { Mail, IdCard, Building2, MapPin, DoorOpen, Plus } from 'lucide-react';
 import type { Faculty } from '@prisma/client';
 import PageShell from '@/components/layout/PageShell';
 import Container from '@/components/ui/Container';
@@ -254,22 +254,17 @@ export default async function FacultyDetailPage({
 
               {member.email && (
                 <ContactRow label="Email" Icon={Mail}>
+                  {/* No `break-all` here: it split addresses mid-word
+                      (…gmail.co / m) even though they fit the column.
+                      Kept on one line; an unusually long address shrinks
+                      slightly rather than wrapping, with the full value
+                      available on hover. */}
                   <a
                     href={`mailto:${member.email}`}
-                    className="text-primary hover:text-accent break-all transition-colors"
+                    title={member.email}
+                    className="block text-primary hover:text-accent transition-colors whitespace-nowrap overflow-hidden text-ellipsis text-[13px]"
                   >
                     {member.email}
-                  </a>
-                </ContactRow>
-              )}
-
-              {member.phone && (
-                <ContactRow label="Phone" Icon={Phone}>
-                  <a
-                    href={`tel:${member.phone}`}
-                    className="text-primary hover:text-accent transition-colors"
-                  >
-                    {member.phone}
                   </a>
                 </ContactRow>
               )}

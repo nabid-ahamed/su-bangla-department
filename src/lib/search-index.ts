@@ -55,7 +55,7 @@ const staticPages: SearchItem[] = [
   { title: 'Notice Board', type: 'Page', href: '/student-society/notice-board', description: 'Department notices and announcements' },
   { title: 'Events', type: 'Page', href: '/student-society/events', description: 'Department events and activities' },
   { title: 'Alumni', type: 'Page', href: '/student-society/alumni', description: 'Notable alumni from the department' },
-  { title: 'FAQ', type: 'Page', href: '/student-society/faq', description: 'Frequently asked questions' },
+  { title: 'FAQs', type: 'Page', href: '/student-society/faq', description: 'Frequently asked questions' },
   { title: 'Visitors', type: 'Page', href: '/student-society/visitor', description: 'Distinguished visitors and their quotes' },
   { title: 'Syllabus', type: 'Page', href: '/student-society/syllabus', description: 'Department syllabus and curriculum' },
   { title: 'Club List', type: 'Page', href: '/student-society/club-list', description: 'Student clubs and societies' },

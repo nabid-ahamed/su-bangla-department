@@ -264,7 +264,9 @@ async function seedFaculty() {
         displayOrder:   i,
         photoUrl:       f.photo ?? null,
         email:          f.email ?? null,
-        phone:          f.phone ?? null,
+        // Phone deliberately not seeded — the department does not
+        // publish personal numbers on faculty profiles.
+        phone:          null,
         suId:           f.suId ?? null,
         // Json columns — source values are typed as the loose union
         // (string | string[] | { heading; items }[]) which TS can't
@@ -430,7 +432,7 @@ async function seedMainNav() {
         { name: 'Events',       href: '/student-society/events',       displayOrder: 2 },
         { name: 'Alumni',       href: '/student-society/alumni',       displayOrder: 3 },
         { name: 'Visitor',      href: '/student-society/visitor',      displayOrder: 4 },
-        { name: 'FAQ',          href: '/student-society/faq',          displayOrder: 5 },
+        { name: 'FAQs',         href: '/student-society/faq',          displayOrder: 5 },
         { name: 'Syllabus',     href: '/student-society/syllabus',     displayOrder: 6 },
         { name: 'Club list',    href: '/student-society/club-list',    displayOrder: 7 },
         { name: 'Mecha Club',   href: '/about/mecha-club',             displayOrder: 8 },
@@ -495,7 +497,7 @@ async function seedFooterGetInTouchLinks() {
     { name: 'Privacy Policy',    href: '/privacy-policy',                                 isExternal: false, isDisabled: false, displayOrder: 3 },
     { name: 'Newsletters',       href: null,                                              isExternal: false, isDisabled: true,  displayOrder: 4 },
     { name: 'Location Map',      href: '/contact',                                        isExternal: false, isDisabled: false, displayOrder: 5 },
-    { name: 'FAQ',               href: '/student-society/faq',                            isExternal: false, isDisabled: false, displayOrder: 6 },
+    { name: 'FAQs',              href: '/student-society/faq',                            isExternal: false, isDisabled: false, displayOrder: 6 },
   ];
   await prisma.footerGetInTouchLink.createMany({ data: rows });
   console.log(`✓ Footer get-in-touch links seeded (${rows.length} rows)`);
