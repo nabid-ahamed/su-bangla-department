@@ -56,12 +56,15 @@ export default function OverviewSection({
           {resolvedHeading}
         </motion.h2>
 
-        <div className="mx-auto grid max-w-[1090px] items-start gap-8 lg:gap-12 lg:grid-cols-[520px_1fr]">
+        {/* items-stretch lets the image column match the height of the
+            text column, so the photo aligns flush with the top of the
+            copy and the bottom of the CTA row. */}
+        <div className="mx-auto grid max-w-[1090px] items-stretch gap-8 lg:gap-12 lg:grid-cols-[520px_1fr]">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="order-2 lg:order-1 space-y-6"
+            className="order-2 flex flex-col lg:order-1"
           >
             {/* body is sanitized server-side before it reaches this
                 client component (see admin-actions/home-overview.ts). */}
@@ -70,7 +73,11 @@ export default function OverviewSection({
               dangerouslySetInnerHTML={{ __html: body }}
             />
 
-            <div className="grid gap-5 sm:grid-cols-2">
+            {/* mt-auto pushes the CTA row to the bottom of the column so
+                it lines up with the bottom edge of the image alongside.
+                mt-6 is the minimum gap when the copy is long enough to
+                fill the column on its own. */}
+            <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:mt-auto lg:pt-6">
               <a
                 href={primaryCtaHref}
                 className={ctaClass}
@@ -92,19 +99,22 @@ export default function OverviewSection({
             </div>
           </motion.div>
 
+          {/* Rounded frame; overflow-hidden clips the image to the
+              radius. On lg the wrapper stretches to the text column's
+              height and the image fills it via object-cover, so both
+              columns end flush. Below lg it keeps a natural 16:9. */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="order-1 lg:order-2 overflow-hidden"
+            className="relative order-1 h-56 overflow-hidden rounded-2xl shadow-md sm:h-72 lg:order-2 lg:h-full lg:min-h-[294px]"
           >
             <Image
               src={imageUrl}
               alt={resolvedAlt}
-              width={1600}
-              height={900}
+              fill
               sizes="(min-width: 1024px) 540px, 100vw"
-              className="h-auto w-full object-cover lg:h-[294px]"
+              className="object-cover"
             />
           </motion.div>
         </div>
