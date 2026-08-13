@@ -511,6 +511,60 @@ model AboutOverview {
   @@map("about_overview")
 }
 
+// Singleton chrome for /about/department-layout — the card header,
+// the "Download the plan" block and the attached PDF. The office rows
+// themselves live in DepartmentLayoutOffice so admins can reorder and
+// edit them individually.
+model DepartmentLayout {
+  id                String   @id @default("singleton")
+
+  // Card header
+  universityName    String   @default("Sonargaon University")
+  departmentName    String
+  addressLine       String?
+
+  // Table column captions — spelled out so the wording stays editable.
+  officeColumnLabel   String @default("Name of the Office")
+  locationColumnLabel String @default("Specific Location of the Office")
+
+  // Download block
+  downloadHeading   String   @default("Download the plan")
+  downloadSubtitle  String?
+  documentTitle     String   @default("Departmental Layout Plan")
+  coverUrl          String?
+  coverPublicId     String?
+  pdfUrl            String?
+  pdfPublicId       String?
+  pdfFileName       String?
+
+  offices           DepartmentLayoutOffice[]
+
+  updatedAt         DateTime @updatedAt
+
+  @@map("department_layout")
+}
+
+// One row of the office directory. `isHighlighted` marks the rows that
+// name this department (Head's office, Faculty dean, the department
+// office) — the reference renders those bold in the brand colour.
+model DepartmentLayoutOffice {
+  id            String  @id @default(cuid())
+  layoutId      String
+  layout        DepartmentLayout @relation(fields: [layoutId], references: [id], onDelete: Cascade)
+
+  officeName    String
+  level         String
+  building      String?
+  isHighlighted Boolean @default(false)
+  displayOrder  Int
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([layoutId, displayOrder])
+  @@map("department_layout_office")
+}
+
 model AboutMissionVision {
   id                       String   @id @default("singleton")
   // Hero

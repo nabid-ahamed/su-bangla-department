@@ -44,7 +44,10 @@ type Kind =
   // Phase 17
   | 'legal-hero'
   // Homepage overview block side image
-  | 'home-overview-image';
+  | 'home-overview-image'
+  // Department layout plan — cover image + printable PDF
+  | 'department-layout-cover'
+  | 'department-layout-pdf';
 
 // Per-kind ideal upload size hint, surfaced under every image field
 // so admins have a target before opening the file picker. null = no
@@ -77,6 +80,8 @@ const RECOMMENDED_SIZE_BY_KIND: Record<Kind, string | null> = {
   'journey-cta-hero':      'Landscape · 1920×800',
   'legal-hero':            'Landscape banner · 1920×500',
   'home-overview-image':   'Landscape · 1600×900',
+  'department-layout-cover': 'Portrait · 3:4 · 600×800 (rendered uncropped)',
+  'department-layout-pdf':   null,
 };
 
 export type UploadMeta = {

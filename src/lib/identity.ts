@@ -248,6 +248,15 @@ export const getAboutMechaClub = cache(async () => {
   return prisma.aboutMechaClub.findUnique({ where: { id: 'singleton' } });
 });
 
+// /about/department-layout — chrome plus the office rows in display
+// order, so the page renders the table without re-sorting.
+export const getDepartmentLayout = cache(async () => {
+  return prisma.departmentLayout.findUnique({
+    where: { id: 'singleton' },
+    include: { offices: { orderBy: { displayOrder: 'asc' } } },
+  });
+});
+
 // Lab systems (Phase 5) removed — the Bangla department has no
 // laboratories. Both public pages, their admin sections and the four
 // backing tables were dropped in migration

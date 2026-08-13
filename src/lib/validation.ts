@@ -303,6 +303,9 @@ export const uploadKindSchema = z.enum([
   'legal-hero',
   // Homepage overview block side image
   'home-overview-image',
+  // Department layout plan — cover image + printable PDF
+  'department-layout-cover',
+  'department-layout-pdf',
 ]);
 
 export const uploadSignSchema = z.object({
@@ -366,6 +369,34 @@ export const aboutOverviewUpdateSchema = z.object({
   heroImageVerticalPercent: z.coerce.number().int().min(0).max(100).default(50),
   paragraphs:        z.array(z.string()).default([]),
 });
+
+// /about/department-layout — singleton chrome. The office rows are
+// validated separately (see departmentLayoutOfficesSchema) because the
+// admin edits them as one table rather than field-by-field.
+export const departmentLayoutUpdateSchema = z.object({
+  universityName:      z.string().min(1).max(300),
+  departmentName:      z.string().min(1).max(300),
+  addressLine:         optionalNullableString,
+  officeColumnLabel:   z.string().min(1).max(200),
+  locationColumnLabel: z.string().min(1).max(200),
+  downloadHeading:     z.string().min(1).max(200),
+  downloadSubtitle:    optionalNullableString,
+  documentTitle:       z.string().min(1).max(300),
+  coverUrl:            optionalNullableString,
+  coverPublicId:       optionalNullableString,
+  pdfUrl:              optionalNullableString,
+  pdfPublicId:         optionalNullableString,
+  pdfFileName:         optionalNullableString,
+});
+
+export const departmentLayoutOfficesSchema = z.array(
+  z.object({
+    officeName:    z.string().min(1).max(300),
+    level:         z.string().min(1).max(200),
+    building:      optionalNullableString,
+    isHighlighted: z.boolean().default(false),
+  }),
+);
 
 export const aboutMissionVisionUpdateSchema = z.object({
   heroTitle:         z.string().min(1).max(300),
