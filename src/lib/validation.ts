@@ -87,6 +87,20 @@ export const programCreateSchema = z.object({
   specializations: z.array(z.string()).default([]),
   cta:             z.string().nullable().optional(),
   ctaHref:         z.string().nullable().optional(),
+
+  // Detail page (/programs/[slug]). slug is nullable — a program
+  // without one simply has no detail page.
+  slug:            optionalNullableString,
+  overview:        optionalNullableString,
+  totalCredits:    optionalNullableString,
+  semesterFormat:  optionalNullableString,
+  semesterFormatLabel: optionalNullableString,
+  degreeAwarded:   optionalNullableString,
+  admissionFee:    optionalNullableString,
+  semesterFee:     optionalNullableString,
+  careerIntro:     optionalNullableString,
+  careerItems:     z.array(z.string()).default([]),
+  careerClosing:   optionalNullableString,
 });
 
 export const programUpdateSchema = programCreateSchema.partial();

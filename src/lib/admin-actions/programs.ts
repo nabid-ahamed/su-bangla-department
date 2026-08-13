@@ -32,14 +32,12 @@ async function requireAuth(): Promise<ActionResult | null> {
   return null;
 }
 
-export async function createProgramAction(
-  _prev: ActionResult | { ok: null },
-  formData: FormData,
-): Promise<ActionResult> {
-  const denied = await requireAuth();
-  if (denied) return denied;
-
-  const raw = {
+/**
+ * Create and update read the same fields, so the shape lives here
+ * once — a field added to the form only has to be wired in one place.
+ */
+function readProgramRow(formData: FormData) {
+  return {
     programName:     getStr(formData, 'programName'),
     degreeCode:      getStr(formData, 'degreeCode'),
     duration:        getStr(formData, 'duration'),
@@ -49,9 +47,31 @@ export async function createProgramAction(
     ctaHref:         emptyToNull(formData.get('ctaHref')),
     imageUrl:        emptyToNull(formData.get('imageUrl')),
     imagePublicId:   emptyToNull(formData.get('imagePublicId')),
-  };
 
-  const parsed = programCreateSchema.safeParse(raw);
+    // Detail page. A blank slug stores NULL rather than '' so the
+    // unique index stays satisfied across several slug-less programs.
+    slug:            emptyToNull(formData.get('slug')),
+    overview:        emptyToNull(formData.get('overview')),
+    totalCredits:    emptyToNull(formData.get('totalCredits')),
+    semesterFormat:  emptyToNull(formData.get('semesterFormat')),
+    semesterFormatLabel: emptyToNull(formData.get('semesterFormatLabel')),
+    degreeAwarded:   emptyToNull(formData.get('degreeAwarded')),
+    admissionFee:    emptyToNull(formData.get('admissionFee')),
+    semesterFee:     emptyToNull(formData.get('semesterFee')),
+    careerIntro:     emptyToNull(formData.get('careerIntro')),
+    careerItems:     splitLines(getStr(formData, 'careerItems')),
+    careerClosing:   emptyToNull(formData.get('careerClosing')),
+  };
+}
+
+export async function createProgramAction(
+  _prev: ActionResult | { ok: null },
+  formData: FormData,
+): Promise<ActionResult> {
+  const denied = await requireAuth();
+  if (denied) return denied;
+
+  const parsed = programCreateSchema.safeParse(readProgramRow(formData));
   if (!parsed.success) {
     return {
       ok: false,
@@ -81,11 +101,26 @@ export async function createProgramAction(
         specializations: parsed.data.specializations,
         cta:             parsed.data.cta ?? null,
         ctaHref:         parsed.data.ctaHref ?? null,
+        slug:            parsed.data.slug ?? null,
+        overview:        parsed.data.overview ?? null,
+        totalCredits:    parsed.data.totalCredits ?? null,
+        semesterFormat:  parsed.data.semesterFormat ?? null,
+        semesterFormatLabel: parsed.data.semesterFormatLabel ?? null,
+        degreeAwarded:   parsed.data.degreeAwarded ?? null,
+        admissionFee:    parsed.data.admissionFee ?? null,
+        semesterFee:     parsed.data.semesterFee ?? null,
+        careerIntro:     parsed.data.careerIntro ?? null,
+        careerItems:     parsed.data.careerItems,
+        careerClosing:   parsed.data.careerClosing ?? null,
       },
     });
   } catch (e: unknown) {
     if ((e as { code?: string })?.code === 'P2002') {
-      return { ok: false, error: `degreeCode "${parsed.data.degreeCode}" is already in use` };
+      // Both degreeCode and slug are unique — name the offending one
+      // so the admin knows which field to change.
+      const target = (e as { meta?: { target?: string[] | string } })?.meta?.target;
+      const field = Array.isArray(target) ? target.join(', ') : String(target ?? 'degreeCode');
+      return { ok: false, error: `${field.includes('slug') ? 'slug' : 'degreeCode'} is already in use` };
     }
     return { ok: false, error: e instanceof Error ? e.message : 'Database error' };
   }
@@ -107,19 +142,7 @@ export async function updateProgramAction(
   const denied = await requireAuth();
   if (denied) return denied;
 
-  const raw = {
-    programName:     getStr(formData, 'programName'),
-    degreeCode:      getStr(formData, 'degreeCode'),
-    duration:        getStr(formData, 'duration'),
-    description:     getStr(formData, 'description'),
-    specializations: splitLines(getStr(formData, 'specializations')),
-    cta:             emptyToNull(formData.get('cta')),
-    ctaHref:         emptyToNull(formData.get('ctaHref')),
-    imageUrl:        emptyToNull(formData.get('imageUrl')),
-    imagePublicId:   emptyToNull(formData.get('imagePublicId')),
-  };
-
-  const parsed = programUpdateSchema.safeParse(raw);
+  const parsed = programUpdateSchema.safeParse(readProgramRow(formData));
   if (!parsed.success) {
     return {
       ok: false,
@@ -137,7 +160,11 @@ export async function updateProgramAction(
   } catch (e: unknown) {
     const code = (e as { code?: string })?.code;
     if (code === 'P2025') return { ok: false, error: 'Program not found' };
-    if (code === 'P2002') return { ok: false, error: 'degreeCode already in use' };
+    if (code === 'P2002') {
+      const target = (e as { meta?: { target?: string[] | string } })?.meta?.target;
+      const field = Array.isArray(target) ? target.join(', ') : String(target ?? '');
+      return { ok: false, error: `${field.includes('slug') ? 'slug' : 'degreeCode'} already in use` };
+    }
     return { ok: false, error: e instanceof Error ? e.message : 'Database error' };
   }
 
@@ -145,6 +172,7 @@ export async function updateProgramAction(
   revalidatePath(`/admin/programs/${id}`);
   revalidatePath('/admin');
   revalidatePath('/');
+  if (parsed.data.slug) revalidatePath(`/programs/${parsed.data.slug}`);
   return { ok: true };
 }
 

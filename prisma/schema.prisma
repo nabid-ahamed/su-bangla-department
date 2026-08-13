@@ -162,6 +162,36 @@ model Program {
   cta             String?
   ctaHref         String?
 
+  // ── Detail page (/programs/[slug]) ──
+  // slug is nullable so pre-existing rows stay valid through the
+  // migration; a program without one simply has no detail page and
+  // the home card falls back to ctaHref.
+  slug            String?  @unique
+  // Long-form intro shown above the stat strip. Falls back to
+  // `description` (the short home-card copy) when unset.
+  overview        String?  @db.Text
+  // Stat strip beside the overview — labels differ per program
+  // (Total Credits, Semester Format, …), so this stays free-form
+  // rather than fixed columns.
+  totalCredits    String?
+  semesterFormat  String?
+  // Label above semesterFormat in the stat strip — the university
+  // calls this "Bi-Semester" here but "Tri-Semester" elsewhere, so
+  // the caption travels with the value instead of being hardcoded.
+  semesterFormatLabel String?
+  degreeAwarded   String?
+  // Stat-strip fees. Free-form strings, not numbers — these render
+  // verbatim ("BDT 12,500") and are never arithmetic.
+  admissionFee    String?
+  semesterFee     String?
+  // Career Prospects — intro paragraph, bullet list, closing note.
+  // All optional: the section is omitted entirely when empty.
+  careerIntro     String?  @db.Text
+  careerItems     String[]
+  careerClosing   String?  @db.Text
+
+  courses         ProgramCourse[]
+
   // Phase 8b — back-relation for ProgramFeeStructure (1:1, optional).
   // Program admin form stays focused on academic metadata (per
   // constraint #12); fee structure lives at /admin/program-fee-structures.
@@ -172,6 +202,35 @@ model Program {
 
   @@index([displayOrder])
   @@map("program")
+}
+
+// One row per course in a program's curriculum. Semester is stored as
+// a plain label ("1st Year 1st Semester") plus an ordinal, because the
+// label is what the university publishes and the ordinal is what we
+// sort and group by — deriving one from the other would break on any
+// program that names its terms differently.
+//
+// `credits` is Float: most courses are 3.0, but viva-voce is 1 and
+// other departments use .75 steps, so Int would silently truncate.
+model ProgramCourse {
+  id            String  @id @default(cuid())
+  programId     String
+  program       Program @relation(fields: [programId], references: [id], onDelete: Cascade)
+
+  semesterLabel String
+  semesterOrder Int
+  courseCode    String
+  courseTitle   String
+  credits       Float
+  courseType    String  @default("Core")
+  prerequisite  String?
+  displayOrder  Int
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([programId, semesterOrder, displayOrder])
+  @@map("program_course")
 }
 
 model ResearchArea {

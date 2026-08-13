@@ -23,9 +23,16 @@ type ProgramRow = {
   specializations: string[];
   cta: string | null;
   ctaHref: string | null;
+  slug: string | null;
 };
 
+// Where "View More" goes, most specific first: an explicit ctaHref set
+// in the CMS wins, then the program's own detail page, and only a
+// program with neither falls back to the admission requirements.
 const DEFAULT_CTA_HREF = '/admission/requirements';
+function ctaHrefFor(program: ProgramRow) {
+  return program.ctaHref ?? (program.slug ? `/programs/${program.slug}` : DEFAULT_CTA_HREF);
+}
 
 type ProgramsSectionProps = {
   programs: readonly ProgramRow[];
@@ -130,7 +137,7 @@ export default function ProgramsSection({ programs }: ProgramsSectionProps) {
                   )}
 
                   <a
-                    href={program.ctaHref ?? DEFAULT_CTA_HREF}
+                    href={ctaHrefFor(program)}
                     className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary to-accent px-8 py-3 text-base font-bold text-white shadow-md transition-all hover:shadow-premium"
                   >
                     {ctaText}

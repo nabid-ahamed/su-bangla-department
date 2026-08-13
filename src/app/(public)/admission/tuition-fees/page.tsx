@@ -17,7 +17,15 @@ export const metadata = {
 // ─── Json column shapes (defensive coerce) ───────────────────────
 
 type OverviewStat = { iconName: string; label: string; value: string };
-type FeeTier = { gpa: string; perCredit: number; total: number };
+// waiver/credits are optional so fee structures written before these
+// columns existed still render — their cells simply stay empty.
+type FeeTier = {
+  gpa: string;
+  waiver?: string;
+  credits?: string;
+  perCredit: number;
+  total: number;
+};
 type FeeGroup = { background: string; tiers: FeeTier[] };
 type FeeShift = {
   iconName: string;
@@ -46,6 +54,12 @@ function coerceTiers(v: unknown): FeeTier[] {
     .filter((r): r is Record<string, unknown> => typeof r === 'object' && r !== null)
     .map((r) => ({
       gpa:       typeof r.gpa       === 'string' ? r.gpa       : '',
+      // Numbers are accepted as well as strings — an admin typing 54
+      // for the waiver shouldn't produce a blank cell.
+      waiver:    typeof r.waiver    === 'string' ? r.waiver
+               : typeof r.waiver    === 'number' ? String(r.waiver) : undefined,
+      credits:   typeof r.credits   === 'string' ? r.credits
+               : typeof r.credits   === 'number' ? String(r.credits) : undefined,
       perCredit: typeof r.perCredit === 'number' ? r.perCredit : 0,
       total:     typeof r.total     === 'number' ? r.total     : 0,
     }))
@@ -210,11 +224,17 @@ export default async function TuitionFeesPage() {
                                     {group.background} Background
                                   </h4>
                                   <div className="overflow-x-auto -mx-2">
-                                    <table className="w-full min-w-[480px] border-collapse">
+                                    <table className="w-full min-w-[640px] border-collapse">
                                       <thead>
                                         <tr className="border-b-2 border-primary/15 text-left">
                                           <th className="px-3 py-3 text-[11px] font-bold tracking-wider uppercase text-gray-500">
                                             GPA Range
+                                          </th>
+                                          <th className="px-3 py-3 text-[11px] font-bold tracking-wider uppercase text-gray-500 text-center">
+                                            Waiver
+                                          </th>
+                                          <th className="px-3 py-3 text-[11px] font-bold tracking-wider uppercase text-gray-500 text-center">
+                                            Credits
                                           </th>
                                           <th className="px-3 py-3 text-[11px] font-bold tracking-wider uppercase text-gray-500 text-right">
                                             Per Credit
@@ -232,8 +252,14 @@ export default async function TuitionFeesPage() {
                                           >
                                             <td className="px-3 py-4">
                                               <span className="inline-block px-3 py-1 bg-primary/8 text-primary text-sm font-semibold rounded">
-                                                GPA {tier.gpa}
+                                                {tier.gpa}
                                               </span>
+                                            </td>
+                                            <td className="px-3 py-4 text-center font-display font-bold text-accent">
+                                              {tier.waiver ?? ''}
+                                            </td>
+                                            <td className="px-3 py-4 text-center font-display font-bold text-gray-800">
+                                              {tier.credits ?? ''}
                                             </td>
                                             <td className="px-3 py-4 text-right font-display font-bold text-gray-800">
                                               {fmt(tier.perCredit)}

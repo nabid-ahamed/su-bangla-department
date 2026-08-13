@@ -87,8 +87,61 @@ export const getProgramsWithCta = cache(async () => {
       specializations: true,
       cta: true,
       ctaHref: true,
+      slug: true,
     },
   });
+});
+
+// Detail page (/programs/[slug]) — the full row plus its curriculum.
+// Courses come back already ordered by semester then position, so the
+// page only has to group them; sorting there would duplicate the
+// index this query relies on.
+export const getProgramBySlug = cache(async (slug: string) => {
+  return prisma.program.findUnique({
+    where: { slug },
+    select: {
+      id: true,
+      programName: true,
+      degreeCode: true,
+      duration: true,
+      description: true,
+      overview: true,
+      imageUrl: true,
+      specializations: true,
+      totalCredits: true,
+      semesterFormat: true,
+      semesterFormatLabel: true,
+      degreeAwarded: true,
+      admissionFee: true,
+      semesterFee: true,
+      careerIntro: true,
+      careerItems: true,
+      careerClosing: true,
+      courses: {
+        orderBy: [{ semesterOrder: 'asc' }, { displayOrder: 'asc' }],
+        select: {
+          id: true,
+          semesterLabel: true,
+          semesterOrder: true,
+          courseCode: true,
+          courseTitle: true,
+          credits: true,
+          courseType: true,
+          prerequisite: true,
+        },
+      },
+    },
+  });
+});
+
+// Slugs for generateStaticParams. Programs without a slug have no
+// detail page, so they are filtered out at the query level.
+export const getProgramSlugs = cache(async () => {
+  const rows = await prisma.program.findMany({
+    where: { slug: { not: null } },
+    select: { slug: true },
+  });
+  return rows.map((r) => r.slug as string);
 });
 
 // ─────────────────────────────────────────────────────────────────

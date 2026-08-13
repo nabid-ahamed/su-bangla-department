@@ -55,7 +55,71 @@ export default function ProgramForm({ initial }: { initial: Program | null }) {
                      placeholder="/admission/requirements" />
         </div>
         <p className="text-xs text-gray-500 -mt-2">
-          CTA href: leave blank to fall back to <code className="font-mono">/admission/requirements</code>.
+          CTA href: leave blank to send &ldquo;View More&rdquo; to this program&rsquo;s detail page
+          (set the URL slug below), or to{' '}
+          <code className="font-mono">/admission/requirements</code> when there is no slug.
+        </p>
+      </Card>
+
+      <Card title="Detail page">
+        <TextField label="URL slug (optional)" name="slug"
+                   defaultValue={initial?.slug ?? ''}
+                   placeholder="ba-in-bangla" />
+        <p className="text-xs text-gray-500 -mt-2">
+          Publishes the program at <code className="font-mono">/programs/&lt;slug&gt;</code>. Leave
+          blank for no detail page. Lowercase letters, numbers and hyphens.
+        </p>
+        <TextAreaField label="Overview (optional)" name="overview" rows={7}
+                       defaultValue={initial?.overview ?? ''}
+                       placeholder="Long-form intro for the detail page. Leave a blank line between paragraphs." />
+        <p className="text-xs text-gray-500 -mt-2">
+          Falls back to the short Description above when blank. Separate paragraphs with a blank line.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <TextField label="Total credits" name="totalCredits"
+                     defaultValue={initial?.totalCredits ?? ''} placeholder="142" />
+          <TextField label="Semester format label" name="semesterFormatLabel"
+                     defaultValue={initial?.semesterFormatLabel ?? ''} placeholder="Bi-Semester" />
+          <TextField label="Semester format" name="semesterFormat"
+                     defaultValue={initial?.semesterFormat ?? ''} placeholder="Six Months Semester" />
+        </div>
+        <TextField label="Degree awarded" name="degreeAwarded"
+                   defaultValue={initial?.degreeAwarded ?? ''}
+                   placeholder="Bachelor of Arts (B.A.) in Bangla" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <TextField label="Admission fee" name="admissionFee"
+                     defaultValue={initial?.admissionFee ?? ''} placeholder="BDT 12,500" />
+          <TextField label="Semester fee" name="semesterFee"
+                     defaultValue={initial?.semesterFee ?? ''} placeholder="BDT 88,000" />
+        </div>
+        <p className="text-xs text-gray-500 -mt-2">
+          The &ldquo;At a Glance&rdquo; strip shows Credit, Semester format, Admission fee and
+          Semester fee. Any left blank is hidden. Degree awarded is used for page metadata.
+        </p>
+      </Card>
+
+      <Card title="Career prospects (optional)">
+        <TextAreaField label="Intro paragraph(s)" name="careerIntro" rows={5}
+                       defaultValue={initial?.careerIntro ?? ''}
+                       placeholder="Opening copy above the career list. Blank line between paragraphs." />
+        <TextAreaField label="Career opportunities (one per line)" name="careerItems" rows={8}
+                       defaultValue={(initial?.careerItems ?? []).join('\n')}
+                       placeholder={'Teaching and Academia — …\nBangladesh Civil Service (BCS) — …'} />
+        <TextAreaField label="Closing note" name="careerClosing" rows={3}
+                       defaultValue={initial?.careerClosing ?? ''} />
+        <p className="text-xs text-gray-500 -mt-2">
+          The whole Career Prospects section is hidden when all three are blank.
+        </p>
+      </Card>
+
+      <Card title="Course structure">
+        <p className="text-sm text-gray-600">
+          Courses and the credit distribution table are managed separately at{' '}
+          <Link href={initial ? `/admin/programs/${initial.id}/courses` : '/admin/programs'}
+                className="text-accent font-medium hover:underline">
+            Program courses
+          </Link>
+          {!initial && ' (available after the program is created)'}.
         </p>
       </Card>
 
