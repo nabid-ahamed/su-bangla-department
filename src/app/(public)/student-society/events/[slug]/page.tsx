@@ -37,9 +37,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 const CATEGORY_STYLES: Record<string, string> = {
   Sports: 'bg-emerald-100 text-emerald-700',
-  'Industrial Visit': 'bg-amber-100 text-amber-700',
+  Cultural: 'bg-amber-100 text-amber-700',
+  Literary: 'bg-teal-100 text-teal-700',
   Achievement: 'bg-violet-100 text-violet-700',
-  Partnership: 'bg-sky-100 text-sky-700',
   Seminar: 'bg-rose-100 text-rose-700',
   Exhibition: 'bg-primary/10 text-primary',
 };

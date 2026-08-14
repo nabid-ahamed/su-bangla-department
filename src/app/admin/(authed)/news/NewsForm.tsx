@@ -15,7 +15,7 @@ import {
 
 type State = ActionResult | { ok: null };
 
-const CATEGORIES = ['Academic', 'Achievement', 'Event', 'Workshop', 'Seminar', 'Industrial Visit'] as const;
+const CATEGORIES = ['Academic', 'Achievement', 'Announcement', 'Event', 'Cultural', 'Seminar'] as const;
 
 // Convert DB DateTime → "YYYY-MM-DD" for <input type="date">.
 function dateInputValue(d: Date | null | undefined): string {
@@ -47,7 +47,7 @@ export default function NewsForm({ initial }: { initial: News | null }) {
                      placeholder="bmtf-industrial-visit-2025" />
           <SelectField label="Category" name="category" required
                        options={CATEGORIES}
-                       defaultValue={initial?.category ?? 'Industrial Visit'} />
+                       defaultValue={initial?.category ?? 'Event'} />
         </div>
         <TextField label="Title (full)" name="title" required
                    defaultValue={initial?.title ?? ''} />

@@ -34,9 +34,9 @@ export default async function VisitorsPage() {
       <Container>
         <div className="mx-auto max-w-3xl text-center mb-10 md:mb-14">
           <p className="text-base md:text-lg text-gray-700 leading-[1.85]">
-            Distinguished guests, industry leaders, and visiting academics who
-            have shared their experience with the Department of Mechanical
-            Engineering at Sonargaon University.
+            Distinguished guests, writers, and visiting academics who have
+            shared their experience with the Department of Bangla at Sonargaon
+            University.
           </p>
         </div>
 

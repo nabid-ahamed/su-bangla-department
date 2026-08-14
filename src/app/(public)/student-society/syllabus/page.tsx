@@ -27,7 +27,7 @@ export default async function SyllabusPage() {
       <Container>
         <div className="max-w-3xl mx-auto text-center mb-10 md:mb-12">
           <p className="text-base md:text-lg text-gray-700 leading-[1.85]">
-            Course-by-course syllabus for the Department of Mechanical Engineering. Download the official PDF for detailed credit distribution, course outcomes, and reference materials.
+            Course-by-course syllabus for the Department of Bangla. Download the official PDF for detailed credit distribution, course outcomes, and reference materials.
           </p>
         </div>
 
@@ -40,6 +40,7 @@ export default async function SyllabusPage() {
             level:      s.level,
             coverUrl:   s.coverUrl,
             pdfUrl:     s.pdfUrl,
+            pdfFileName: s.pdfFileName,
             summary:    s.summary,
           }))}
         />

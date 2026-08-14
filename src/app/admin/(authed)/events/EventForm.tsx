@@ -15,7 +15,7 @@ import {
 
 type State = ActionResult | { ok: null };
 
-const CATEGORIES = ['Sports', 'Industrial Visit', 'Achievement', 'Partnership', 'Seminar', 'Exhibition'] as const;
+const CATEGORIES = ['Sports', 'Cultural', 'Literary', 'Achievement', 'Seminar', 'Exhibition'] as const;
 const STATUSES = ['Past', 'Current', 'Upcoming'] as const;
 
 function dateInputValue(d: Date | null | undefined): string {

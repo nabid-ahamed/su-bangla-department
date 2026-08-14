@@ -46,7 +46,7 @@ export default function NewsSection({ news }: Props) {
           <SectionTitle
             eyebrow="Department Updates"
             title="Latest News"
-            subtitle="From hands-on workshops to breakthrough announcements—never miss what's shaping tomorrow's innovations."
+            subtitle="Pitha Utshob to Rabindra Jayanti—the festivals, seminars and student milestones that keep Bangla language and literature alive on campus."
           />
           <a href={NEWS_PATH} className="hidden md:block">
             <Button variant="ghost" className="mb-6 md:mb-8 group">

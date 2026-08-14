@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
-import { Search, Download } from 'lucide-react';
+import { Search, Download, FileText, ExternalLink } from 'lucide-react';
 
 export type SyllabusCardRow = {
   slug: string;
@@ -12,6 +12,7 @@ export type SyllabusCardRow = {
   level: string;
   coverUrl: string;
   pdfUrl: string | null;
+  pdfFileName: string | null;
   summary: string;
 };
 
@@ -82,7 +83,7 @@ export default function SyllabusClient({ items }: { items: readonly SyllabusCard
                 Postgraduate syllabus coming soon
               </p>
               <p className="text-gray-500 text-sm">
-                Postgraduate programs in Mechanical Engineering are not offered yet. Please check back later for updates.
+                Postgraduate programs in Bangla are not offered yet. Please check back later for updates.
               </p>
             </>
           ) : (
@@ -98,15 +99,25 @@ export default function SyllabusClient({ items }: { items: readonly SyllabusCard
                 filtered.length === 1 ? 'w-full max-w-md' : ''
               }`}
             >
+              {/* A syllabus can exist before its cover artwork does —
+                  an empty coverUrl would render a broken image, so show
+                  a placeholder that keeps the card's proportions. */}
               <div className="bg-gray-50">
-                <Image
-                  src={s.coverUrl}
-                  alt={s.title}
-                  width={600}
-                  height={800}
-                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                  className="block w-full h-auto"
-                />
+                {s.coverUrl ? (
+                  <Image
+                    src={s.coverUrl}
+                    alt={s.title}
+                    width={1200}
+                    height={600}
+                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    className="block w-full h-auto"
+                  />
+                ) : (
+                  <div className="flex aspect-[2/1] flex-col items-center justify-center gap-3 text-gray-400">
+                    <FileText size={32} strokeWidth={1.5} />
+                    <span className="text-[13px]">Cover image coming soon</span>
+                  </div>
+                )}
               </div>
 
               <div className="p-5 flex-1 flex flex-col">
@@ -127,14 +138,28 @@ export default function SyllabusClient({ items }: { items: readonly SyllabusCard
                 <p className="text-sm text-gray-700 leading-relaxed mb-5">{s.summary}</p>
 
                 {s.pdfUrl ? (
-                  <a
-                    href={s.pdfUrl}
-                    download
-                    className="mt-auto inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-md transition-colors"
-                  >
-                    <Download size={16} />
-                    Download Syllabus
-                  </a>
+                  /* Two actions: read it in the browser, or keep a copy.
+                     Opening in a new tab means students don't lose the
+                     listing page just to glance at the syllabus. */
+                  <div className="mt-auto flex flex-col gap-3">
+                    <a
+                      href={s.pdfUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-md transition-colors"
+                    >
+                      <ExternalLink size={16} />
+                      View Syllabus
+                    </a>
+                    <a
+                      href={s.pdfUrl}
+                      download={s.pdfFileName ?? undefined}
+                      className="inline-flex items-center justify-center gap-2 w-full px-5 py-3 border-2 border-primary/70 text-primary hover:bg-primary/5 text-sm font-semibold rounded-md transition-colors"
+                    >
+                      <Download size={16} />
+                      Download
+                    </a>
+                  </div>
                 ) : (
                   <span className="mt-auto inline-flex items-center justify-center gap-2 w-full px-5 py-3 bg-gray-100 text-gray-400 text-sm font-semibold rounded-md cursor-not-allowed">
                     PDF not uploaded yet

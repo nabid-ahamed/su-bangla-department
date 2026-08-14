@@ -1,5 +1,6 @@
 import dynamic from 'next/dynamic';
 import HeroSection from '@/components/sections/HeroSection';
+import LeadPopup from '@/components/sections/LeadPopup';
 import {
   getDepartmentIdentity,
   getUniversityIdentity,
@@ -9,6 +10,7 @@ import {
   getNewsHomeTop,
   getEventsHomeTop,
   getNoticesHomeTop,
+  getLeadPopup,
 } from '@/lib/identity';
 
 function sectionSkeleton(minHeight: string) {
@@ -43,16 +45,18 @@ const ServicesSection = dynamic(() => import('@/components/sections/ServicesSect
 });
 
 export default async function HomePage() {
-  const [dept, uni, overview, programs, researchAreas, newsTop, eventsTop, noticesTop] = await Promise.all([
-    getDepartmentIdentity(),
-    getUniversityIdentity(),
-    getHomeOverview(),
-    getProgramsWithCta(),
-    getResearchAreas(),
-    getNewsHomeTop(),
-    getEventsHomeTop(),
-    getNoticesHomeTop(),
-  ]);
+  const [dept, uni, overview, programs, researchAreas, newsTop, eventsTop, noticesTop, leadPopup] =
+    await Promise.all([
+      getDepartmentIdentity(),
+      getUniversityIdentity(),
+      getHomeOverview(),
+      getProgramsWithCta(),
+      getResearchAreas(),
+      getNewsHomeTop(),
+      getEventsHomeTop(),
+      getNoticesHomeTop(),
+      getLeadPopup(),
+    ]);
   return (
     <>
       <HeroSection
@@ -95,6 +99,7 @@ export default async function HomePage() {
       <EventsSection events={eventsTop} shortCode={dept.shortCode} />
       <NewsSection news={newsTop} />
       <ServicesSection />
+      {leadPopup && <LeadPopup config={leadPopup} />}
     </>
   );
 }

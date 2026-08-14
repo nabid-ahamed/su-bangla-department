@@ -76,6 +76,7 @@ const PRIMARY_NAV: NavItem[] = [
   { href: '/admin/footer-links',        label: 'Footer Links',        icon: PanelBottom },
   { href: '/admin/home-overview',       label: 'Homepage Overview',   icon: LayoutTemplate },
   { href: '/admin/journey-cta',         label: 'Journey CTA',         icon: Rocket },
+  { href: '/admin/lead-popup',          label: 'Lead Popup',          icon: Megaphone },
   { href: '/admin/legal-pages',         label: 'Legal Pages',         icon: ShieldCheck },
   { href: '/admin/page-heroes',         label: 'Page Heroes',         icon: ImageIcon },
 ];
@@ -511,6 +512,17 @@ export default function Sidebar({
               {newSubmissionCount}
             </span>
           )}
+        </Link>
+
+        {/* Leads — admission enquiries from the homepage popup.
+            Operational inbox, so it sits with the other submission
+            lists rather than inside a content group. */}
+        <Link
+          href="/admin/leads"
+          className={linkClass(!!pathname?.startsWith('/admin/leads'))}
+        >
+          <Sparkles size={16} />
+          Leads
         </Link>
 
         {/* Club join applications — operational inbox, mirrors the

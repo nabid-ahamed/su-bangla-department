@@ -372,6 +372,54 @@ export const aboutOverviewUpdateSchema = z.object({
   paragraphs:        z.array(z.string()).default([]),
 });
 
+// ─── Lead popup (homepage lead capture) ─────────────────────────
+
+// Bangladeshi mobile: 11 digits starting 01, optionally +880-prefixed.
+// Kept permissive on separators so "017 1234 5678" is accepted, then
+// normalised before storage.
+const bdPhone = z
+  .string()
+  .trim()
+  .min(1, 'Mobile number is required')
+  .transform((v) => v.replace(/[\s-]/g, ''))
+  .refine(
+    (v) => /^(?:\+?880)?01[3-9]\d{8}$/.test(v),
+    'Enter a valid Bangladeshi mobile number (e.g. 01712345678)',
+  );
+
+export const leadCreateSchema = z.object({
+  fullName:  z.string().trim().min(2, 'Please enter your full name').max(150),
+  phone:     bdPhone,
+  programme: z.string().trim().min(1, 'Please choose a programme').max(200),
+  sourcePath: optionalNullableString,
+});
+
+export const leadStatusEnum = z.enum(['new', 'contacted', 'closed']);
+
+export const leadUpdateSchema = z.object({
+  status: leadStatusEnum.optional(),
+  notes:  optionalNullableString,
+});
+
+export const leadPopupUpdateSchema = z.object({
+  isEnabled:       z.coerce.boolean(),
+  delaySeconds:    z.coerce.number().int().min(0).max(600),
+  reshowAfterDays: z.coerce.number().int().min(0).max(365),
+  heading:         z.string().min(1).max(300),
+  subheading:      optionalNullableString,
+  nameLabel:       z.string().min(1).max(100),
+  namePlaceholder: z.string().min(1).max(150),
+  phoneLabel:      z.string().min(1).max(100),
+  phonePlaceholder: z.string().min(1).max(150),
+  programLabel:    z.string().min(1).max(150),
+  programPlaceholder: z.string().min(1).max(150),
+  programOptions:  z.array(z.string()).default([]),
+  submitLabel:     z.string().min(1).max(100),
+  footnote:        optionalNullableString,
+  successHeading:  z.string().min(1).max(200),
+  successBody:     optionalNullableString,
+});
+
 // /student-society/service-charter — singleton chrome + service cards.
 export const serviceCharterUpdateSchema = z.object({
   intro:       optionalNullableString,
@@ -616,10 +664,10 @@ export const newsLandingUpdateSchema = z.object({
 export const newsCategoryEnum = z.enum([
   'Academic',
   'Achievement',
+  'Announcement',
   'Event',
-  'Workshop',
+  'Cultural',
   'Seminar',
-  'Industrial Visit',
 ]);
 
 export const newsCreateSchema = z.object({
@@ -642,9 +690,9 @@ export const newsUpdateSchema = newsCreateSchema;
 
 export const eventCategoryEnum = z.enum([
   'Sports',
-  'Industrial Visit',
+  'Cultural',
+  'Literary',
   'Achievement',
-  'Partnership',
   'Seminar',
   'Exhibition',
 ]);

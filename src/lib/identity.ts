@@ -248,6 +248,29 @@ export const getAboutMechaClub = cache(async () => {
   return prisma.aboutMechaClub.findUnique({ where: { id: 'singleton' } });
 });
 
+// Homepage lead-capture popup. Returns null when disabled so the
+// component never reaches the client on a switched-off popup.
+export const getLeadPopup = cache(async () => {
+  const row = await prisma.leadPopup.findUnique({ where: { id: 'singleton' } });
+  if (!row || !row.isEnabled) return null;
+
+  // programOptions is authored in the CMS, but an empty list falls back
+  // to the live Program table so the dropdown can't go stale when a
+  // programme is added or renamed.
+  let options = row.programOptions;
+  if (options.length === 0) {
+    const programs = await prisma.program.findMany({
+      orderBy: { displayOrder: 'asc' },
+      select: { programName: true },
+    });
+    options = programs.map((p) => {
+      const parts = p.programName.split(' — ');
+      return parts.length > 1 ? parts.slice(1).join(' — ') : p.programName;
+    });
+  }
+  return { ...row, programOptions: options };
+});
+
 // /student-society/service-charter — chrome plus the service cards in
 // display order.
 export const getServiceCharter = cache(async () => {
