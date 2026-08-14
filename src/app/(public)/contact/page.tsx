@@ -57,7 +57,7 @@ export default async function ContactPage() {
 
   const heroTitle    = content?.heroTitle    ?? 'Contact Us';
   const heroOverline = content?.heroOverline ?? 'Get in Touch';
-  const heroImage    = content?.heroImageUrl ?? '/assets/contact-hero.webp';
+  const heroImage    = content?.heroImageUrl ?? '/assets/contact-hero-v2.webp';
   const heroPosition = `center ${content?.heroImageVerticalPercent ?? 50}%`;
   const introBody    = content?.introBody    ?? '';
   const quickContactHeading = content?.quickContactHeading ?? 'Quick Contact Information';
