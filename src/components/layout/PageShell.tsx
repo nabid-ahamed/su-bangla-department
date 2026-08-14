@@ -6,6 +6,7 @@ import { motion } from 'motion/react';
 import { ChevronRight, Home } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Container from '../ui/Container';
+import { getBreadcrumbs } from '@/lib/breadcrumbs';
 
 const slugToTitle = (slug: string) =>
   slug
@@ -29,6 +30,11 @@ interface PageShellProps {
   imagePosition?: string;
   /** Tailwind classes applied to the content wrapper around children. */
   contentClassName?: string;
+  /**
+   * Overrides the final breadcrumb. Detail pages pass the record's real
+   * title, since it can't be derived from the URL slug.
+   */
+  breadcrumbLabel?: string;
 }
 
 export default function PageShell({
@@ -39,9 +45,11 @@ export default function PageShell({
   image = null,
   imagePosition = 'center',
   contentClassName = 'py-12 md:py-16',
+  breadcrumbLabel,
 }: PageShellProps) {
   const pathname = usePathname();
   const segments = pathname.split('/').filter(Boolean);
+  const crumbs = getBreadcrumbs(pathname, breadcrumbLabel);
   const computedOverline =
     overline ?? (segments.length > 1 ? slugToTitle(segments[0]) : 'Department of');
 
@@ -139,20 +147,20 @@ export default function PageShell({
               >
                 <Home size={13} /> Home
               </a>
-              {segments.map((seg, idx) => {
-                const href = '/' + segments.slice(0, idx + 1).join('/');
-                const isLast = idx === segments.length - 1;
+              {crumbs.map((crumb, idx) => {
+                const isLast = idx === crumbs.length - 1;
                 return (
-                  <span key={href} className="inline-flex items-center gap-2">
+                  <span key={`${crumb.label}-${idx}`} className="inline-flex items-center gap-2">
                     <ChevronRight size={13} className="opacity-50" />
                     {isLast ? (
-                      <span className="text-button-yellow font-semibold">
-                        {slugToTitle(seg)}
-                      </span>
-                    ) : (
-                      <a href={href} className="hover:text-button-yellow transition-colors">
-                        {slugToTitle(seg)}
+                      <span className="text-button-yellow font-semibold">{crumb.label}</span>
+                    ) : crumb.href ? (
+                      <a href={crumb.href} className="hover:text-button-yellow transition-colors">
+                        {crumb.label}
                       </a>
+                    ) : (
+                      // Menu grouping with no page behind it — label only.
+                      <span className="text-white/70">{crumb.label}</span>
                     )}
                   </span>
                 );

@@ -103,6 +103,7 @@ export default async function ProgramDetailPage({
     <PageShell
       title={heading}
       overline={overline ?? 'Programs'}
+      breadcrumbLabel={heading}
       image={program.imageUrl}
       contentClassName="bg-gray-50 py-12 md:py-20"
     >

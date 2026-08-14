@@ -128,18 +128,23 @@ export default async function ServiceCharterPage() {
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {items.map((item, idx) => {
+              // Officer phone numbers are deliberately not shown on this
+              // page — students should reach the office by e-mail or in
+              // person. The numbers stay in the database (and remain
+              // editable in the CMS) so they can be surfaced again by
+              // passing the phone fields through here.
               const officers: Officer[] = [
                 {
                   name: item.responsibleName,
                   role: item.responsibleRole,
-                  phone: item.responsiblePhone,
+                  phone: null,
                   email: item.responsibleEmail,
                   room: item.responsibleRoom,
                 },
                 {
                   name: item.responsible2Name,
                   role: item.responsible2Role,
-                  phone: item.responsible2Phone,
+                  phone: null,
                   email: item.responsible2Email,
                   room: item.responsible2Room,
                 },

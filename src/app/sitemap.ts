@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { prisma } from '@/lib/db';
 import { SITE_URL as BASE_URL } from '@/lib/site-url';
+import { SYLLABUS_PAGE_ENABLED } from '@/lib/feature-flags';
 
 const staticRoutes: { path: string; priority: number; changeFrequency: 'weekly' | 'monthly' | 'yearly' }[] = [
   { path: '/', priority: 1.0, changeFrequency: 'weekly' },
@@ -24,6 +25,9 @@ const staticRoutes: { path: string; priority: number; changeFrequency: 'weekly' 
   { path: '/student-society/club-list', priority: 0.6, changeFrequency: 'monthly' },
   { path: '/student-society/faq', priority: 0.6, changeFrequency: 'monthly' },
   { path: '/student-society/visitor', priority: 0.5, changeFrequency: 'monthly' },
+  // Syllabus is listed only while the page is switched on — see
+  // SYLLABUS_PAGE_ENABLED. Filtered out below rather than deleted so it
+  // comes back with the flag.
   { path: '/student-society/syllabus', priority: 0.7, changeFrequency: 'monthly' },
   { path: '/news', priority: 0.8, changeFrequency: 'weekly' },
   { path: '/gallery', priority: 0.6, changeFrequency: 'monthly' },
@@ -45,12 +49,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     prisma.news.findMany({ select: { slug: true } }),
   ]);
 
-  const statics: MetadataRoute.Sitemap = staticRoutes.map(({ path, priority, changeFrequency }) => ({
-    url: `${BASE_URL}${path}`,
-    lastModified: now,
-    changeFrequency,
-    priority,
-  }));
+  const statics: MetadataRoute.Sitemap = staticRoutes
+    .filter(({ path }) => SYLLABUS_PAGE_ENABLED || path !== '/student-society/syllabus')
+    .map(({ path, priority, changeFrequency }) => ({
+      url: `${BASE_URL}${path}`,
+      lastModified: now,
+      changeFrequency,
+      priority,
+    }));
 
   const facultyPages: MetadataRoute.Sitemap = facultyRows.map((m) => ({
     url: `${BASE_URL}/faculty-member/${m.slug}`,

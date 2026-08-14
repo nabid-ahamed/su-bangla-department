@@ -3,6 +3,7 @@
 // import SearchItem + search() from '@/lib/search' instead.
 import { cache } from 'react';
 import { prisma } from '@/lib/db';
+import { SYLLABUS_PAGE_ENABLED } from '@/lib/feature-flags';
 import type { SearchItem } from './search';
 
 // Re-export the type from the pure module so existing server-side
@@ -362,8 +363,17 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
     type: 'Scholarship',
   }));
 
+  // While the syllabus page is switched off, drop its page entry and any
+  // syllabus rows that would link back to it. Rows with an uploaded PDF
+  // still point straight at the file, so those are dropped too — the
+  // whole section is meant to be hidden, not partially reachable.
+  const visibleStaticPages = SYLLABUS_PAGE_ENABLED
+    ? staticPages
+    : staticPages.filter((p) => p.href !== '/student-society/syllabus');
+  const visibleSyllabusItems = SYLLABUS_PAGE_ENABLED ? syllabusItems : [];
+
   return [
-    ...staticPages,
+    ...visibleStaticPages,
     ...facultyItems,
     ...programItems,
     ...researchAreaItems,
@@ -377,7 +387,7 @@ export const getSearchIndex = cache(async (): Promise<SearchItem[]> => {
     ...visitorItems,
     ...researchItems,
     ...transportItems,
-    ...syllabusItems,
+    ...visibleSyllabusItems,
     ...admissionNoticeItems,
     ...prospectusItems,
     ...feeItems,

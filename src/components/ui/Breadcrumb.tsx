@@ -2,16 +2,11 @@
 
 import { usePathname } from 'next/navigation';
 import { ChevronRight, Home } from 'lucide-react';
+import { getBreadcrumbs } from '@/lib/breadcrumbs';
 
-const slugToTitle = (slug: string) =>
-  slug
-    .split('-')
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ');
-
-export default function Breadcrumb() {
+export default function Breadcrumb({ currentLabel }: { currentLabel?: string } = {}) {
   const pathname = usePathname();
-  const segments = pathname.split('/').filter(Boolean);
+  const crumbs = getBreadcrumbs(pathname, currentLabel);
 
   return (
     <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm text-white/80">
@@ -19,18 +14,19 @@ export default function Breadcrumb() {
         <Home size={14} />
         <span>Home</span>
       </a>
-      {segments.map((seg, idx) => {
-        const href = '/' + segments.slice(0, idx + 1).join('/');
-        const isLast = idx === segments.length - 1;
+      {crumbs.map((crumb, idx) => {
+        const isLast = idx === crumbs.length - 1;
         return (
-          <span key={href} className="inline-flex items-center gap-2">
+          <span key={`${crumb.label}-${idx}`} className="inline-flex items-center gap-2">
             <ChevronRight size={14} className="opacity-60" />
             {isLast ? (
-              <span className="text-white font-medium">{slugToTitle(seg)}</span>
-            ) : (
-              <a href={href} className="hover:text-white transition-colors">
-                {slugToTitle(seg)}
+              <span className="text-white font-medium">{crumb.label}</span>
+            ) : crumb.href ? (
+              <a href={crumb.href} className="hover:text-white transition-colors">
+                {crumb.label}
               </a>
+            ) : (
+              <span className="text-white/60">{crumb.label}</span>
             )}
           </span>
         );

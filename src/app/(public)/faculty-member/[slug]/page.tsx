@@ -177,6 +177,7 @@ export default async function FacultyDetailPage({
     <PageShell
       title={member.name}
       overline="Faculty"
+      breadcrumbLabel={member.name}
       image={hero?.heroImageUrl || null}
       imagePosition={hero ? `center ${hero.heroImageVerticalPercent}%` : 'center'}
       contentClassName="bg-gray-50 py-12 md:py-20"
