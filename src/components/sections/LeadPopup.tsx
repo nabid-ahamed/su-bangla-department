@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { X, ArrowRight, CheckCircle2, Loader2 } from 'lucide-react';
 
 export type LeadPopupConfig = {
@@ -126,7 +125,10 @@ export default function LeadPopup({ config }: { config: LeadPopupConfig }) {
 
   if (!mounted || !open) return null;
 
-  return createPortal(
+  // Rendered inline with a fixed-position wrapper rather than through a
+  // portal — matches the other modals in this project and avoids
+  // touching react-dom during server rendering.
+  return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center p-4"
       role="dialog"
@@ -282,8 +284,7 @@ export default function LeadPopup({ config }: { config: LeadPopupConfig }) {
           )}
         </div>
       </div>
-    </div>,
-    document.body,
+    </div>
   );
 }
 
