@@ -15,7 +15,7 @@ async function requireAuth(): Promise<ActionResult | null> {
 }
 
 function revalidateSurfaces() {
-  revalidatePath('/admin/mecha-club-applications');
+  revalidatePath('/admin/club-applications');
   revalidatePath('/admin');
 }
 

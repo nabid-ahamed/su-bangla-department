@@ -20,7 +20,7 @@ import { useConfirm } from '@/components/admin/ConfirmDialogProvider';
 import {
   deleteMechaClubApplicationAction,
   updateMechaClubApplicationStatusAction,
-} from '@/lib/admin-actions/mecha-club-applications';
+} from '@/lib/admin-actions/club-applications';
 
 type ApplicationRow = {
   id:          string;

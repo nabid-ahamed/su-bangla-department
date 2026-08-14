@@ -23,7 +23,7 @@ export default async function MechaClubApplicationsPage() {
         </h1>
         <p className="mt-1 text-sm text-gray-500">
           Join applications submitted via the public{' '}
-          <code className="font-mono">/about/mecha-club</code> popup form.{' '}
+          <code className="font-mono">/about/cultural-club</code> popup form.{' '}
           {applications.length} total
           {pendingCount > 0 ? ` · ${pendingCount} pending review` : ''}.
         </p>

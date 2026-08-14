@@ -97,8 +97,8 @@ export async function updateAboutMechaClubAction(
     return { ok: false, error: e instanceof Error ? e.message : 'Database error' };
   }
 
-  revalidatePath('/admin/about-mecha-club');
+  revalidatePath('/admin/cultural-club');
   revalidatePath('/admin');
-  revalidatePath('/about/mecha-club');
+  revalidatePath('/about/cultural-club');
   return { ok: true };
 }

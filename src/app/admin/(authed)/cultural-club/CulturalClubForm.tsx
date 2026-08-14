@@ -10,7 +10,7 @@ import ActivitiesEditor from '@/components/admin/ActivitiesEditor';
 import {
   updateAboutMechaClubAction,
   type ActionResult,
-} from '@/lib/admin-actions/about-mecha-club';
+} from '@/lib/admin-actions/cultural-club';
 
 type State = ActionResult | { ok: null };
 
@@ -18,7 +18,7 @@ type State = ActionResult | { ok: null };
 // shared IconInputField inside ActivitiesEditor; the legacy curated
 // hint list is gone.
 
-export default function AboutMechaClubForm({ initial }: { initial: AboutMechaClub | null }) {
+export default function CulturalClubForm({ initial }: { initial: AboutMechaClub | null }) {
   const [state, formAction, pending] = useActionState<State, FormData>(
     updateAboutMechaClubAction,
     { ok: null },

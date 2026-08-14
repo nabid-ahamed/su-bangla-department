@@ -103,6 +103,19 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+
+  async redirects() {
+    return [
+      // The club was renamed from "SU Mecha Club" to "Bangla Literature
+      // & Cultural Club" and its route moved with it. Permanent so
+      // existing links and search results follow to the new URL.
+      {
+        source: '/about/mecha-club',
+        destination: '/about/cultural-club',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

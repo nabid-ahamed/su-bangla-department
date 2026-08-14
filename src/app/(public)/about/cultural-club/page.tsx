@@ -5,12 +5,12 @@ import Container from '@/components/ui/Container';
 import { getAboutMechaClub } from '@/lib/identity';
 import { sanitizeHtml } from '@/lib/sanitize-html';
 import { DynamicLucideIcon } from '@/components/ui/DynamicLucideIcon';
-import JoinMechaClubButton from './JoinMechaClubButton';
+import JoinClubButton from './JoinClubButton';
 
 export const metadata = {
-  title: 'Bangla Club',
+  title: 'Bangla Literature & Cultural Club',
   description:
-    'SU Bangla Club — nurturing language and literature through literary sessions, workshops, seminars, cultural programmes and an active alumni network.',
+    'The Bangla Literature & Cultural Club at Sonargaon University — celebrating language, literature and Bengali heritage through festivals, performances and literary gatherings.',
 };
 
 // Phase 20 — activities[].iconName resolves via DynamicLucideIcon
@@ -53,7 +53,7 @@ function coerceActivities(v: unknown): ActivityRow[] {
     .filter((r) => r.title);
 }
 
-export default async function MechaClubPage() {
+export default async function CulturalClubPage() {
   const row = await getAboutMechaClub();
   if (!row) {
     throw new Error(
@@ -112,7 +112,7 @@ export default async function MechaClubPage() {
             <div className="relative rounded-2xl overflow-hidden shadow-2xl h-[360px] md:h-[440px]">
               <Image
                 src={row.introImageUrl}
-                alt="Mecha Club members"
+                alt="Club members at a cultural program"
                 fill
                 sizes="(min-width: 1024px) 50vw, 100vw"
                 className="object-cover"
@@ -208,9 +208,9 @@ export default async function MechaClubPage() {
               {/* Primary CTA opens an in-app application form modal
                   instead of linking out — chair's request. Label still
                   comes from the DB so admin can rename via
-                  /admin/about-mecha-club; networkPrimaryCtaHref is
+                  /admin/cultural-club; networkPrimaryCtaHref is
                   intentionally unused for this CTA now. */}
-              <JoinMechaClubButton label={row.networkPrimaryCtaLabel} />
+              <JoinClubButton label={row.networkPrimaryCtaLabel} />
               {row.networkSecondaryCtaLabel && row.networkSecondaryCtaHref && (
                 <a
                   href={row.networkSecondaryCtaHref}

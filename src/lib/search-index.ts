@@ -38,7 +38,7 @@ const staticPages: SearchItem[] = [
   { title: 'Message from Head', type: 'Page', href: '/about/message-from-head', description: "Head of Department's welcome message" },
   { title: "Dean's Message", type: 'Page', href: '/about/deans-message', description: "Dean's welcome message" },
   { title: 'Mission & Vision', type: 'Page', href: '/about/mission-vision', description: "Department's mission and long-term vision" },
-  { title: 'Bangla Club', type: 'Page', href: '/about/mecha-club', description: 'Sonargaon University Bangla Club' },
+  { title: 'Bangla Literature & Cultural Club', type: 'Page', href: '/about/cultural-club', description: 'Sonargaon University Bangla Literature & Cultural Club' },
 
   // Faculty
   { title: 'Faculty Members', type: 'Page', href: '/faculty-member', description: 'List of all faculty members' },

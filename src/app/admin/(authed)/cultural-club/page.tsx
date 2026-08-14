@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/db';
 import { getSession } from '@/lib/auth-server';
-import AboutMechaClubForm from './AboutMechaClubForm';
+import CulturalClubForm from './CulturalClubForm';
 
 export const metadata = { title: 'About — Bangla Club' };
 
@@ -14,12 +14,12 @@ export default async function AboutMechaClubPage() {
   return (
     <div className="space-y-6 max-w-3xl">
       <header>
-        <h1 className="text-2xl font-display font-bold text-gray-900">About — Mecha Club</h1>
+        <h1 className="text-2xl font-display font-bold text-gray-900">Bangla Literature &amp; Cultural Club</h1>
         <p className="mt-1 text-sm text-gray-500">
-          Hero, intro, stats, activities, and network section for <code className="font-mono">/about/mecha-club</code>.
+          Hero, intro, stats, activities, and network section for <code className="font-mono">/about/cultural-club</code>.
         </p>
       </header>
-      <AboutMechaClubForm initial={row} />
+      <CulturalClubForm initial={row} />
     </div>
   );
 }
