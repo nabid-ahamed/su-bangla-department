@@ -914,6 +914,63 @@ model BusRoute {
   @@map("bus_route")
 }
 
+// Singleton chrome for /student-society/service-charter — the intro
+// line and the downloadable PDF. The service cards live in
+// ServiceCharterItem so admins can reorder and edit them one by one.
+model ServiceCharter {
+  id            String   @id @default("singleton")
+
+  intro         String?  @db.Text
+
+  // Download strip below the grid. Hidden entirely when no PDF is set.
+  pdfHeading    String   @default("Service Charter as a PDF")
+  pdfSubtitle   String?
+  pdfUrl        String?
+  pdfPublicId   String?
+  pdfFileName   String?
+
+  items         ServiceCharterItem[]
+
+  updatedAt     DateTime @updatedAt
+
+  @@map("service_charter")
+}
+
+// One service card. `steps` is a String[] rather than a Json blob
+// because every step is plain text — the page renders a single step as
+// an arrow bullet and multiple steps as a numbered list.
+//
+// The responsible officer is stored as separate fields rather than one
+// blob so the page can linkify the phone and email independently.
+model ServiceCharterItem {
+  id             String  @id @default(cuid())
+  charterId      String
+  charter        ServiceCharter @relation(fields: [charterId], references: [id], onDelete: Cascade)
+
+  title          String  @db.Text
+  steps          String[]
+
+  responsibleName    String?
+  responsibleRole    String?
+  responsiblePhone   String?
+  responsibleEmail   String?
+  responsibleRoom    String?
+  // Some services list a second officer (e.g. exam coordinator).
+  responsible2Name   String?
+  responsible2Role   String?
+  responsible2Phone  String?
+  responsible2Email  String?
+  responsible2Room   String?
+
+  displayOrder   Int
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([charterId, displayOrder])
+  @@map("service_charter_item")
+}
+
 model Syllabus {
   id            String   @id @default(cuid())
   slug          String   @unique

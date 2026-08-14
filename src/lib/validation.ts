@@ -306,6 +306,8 @@ export const uploadKindSchema = z.enum([
   // Department layout plan — cover image + printable PDF
   'department-layout-cover',
   'department-layout-pdf',
+  // Student-society service charter PDF
+  'service-charter-pdf',
 ]);
 
 export const uploadSignSchema = z.object({
@@ -369,6 +371,33 @@ export const aboutOverviewUpdateSchema = z.object({
   heroImageVerticalPercent: z.coerce.number().int().min(0).max(100).default(50),
   paragraphs:        z.array(z.string()).default([]),
 });
+
+// /student-society/service-charter — singleton chrome + service cards.
+export const serviceCharterUpdateSchema = z.object({
+  intro:       optionalNullableString,
+  pdfHeading:  z.string().min(1).max(200),
+  pdfSubtitle: optionalNullableString,
+  pdfUrl:      optionalNullableString,
+  pdfPublicId: optionalNullableString,
+  pdfFileName: optionalNullableString,
+});
+
+export const serviceCharterItemsSchema = z.array(
+  z.object({
+    title:             z.string().min(1),
+    steps:             z.array(z.string()).default([]),
+    responsibleName:   optionalNullableString,
+    responsibleRole:   optionalNullableString,
+    responsiblePhone:  optionalNullableString,
+    responsibleEmail:  optionalNullableString,
+    responsibleRoom:   optionalNullableString,
+    responsible2Name:  optionalNullableString,
+    responsible2Role:  optionalNullableString,
+    responsible2Phone: optionalNullableString,
+    responsible2Email: optionalNullableString,
+    responsible2Room:  optionalNullableString,
+  }),
+);
 
 // /about/department-layout — singleton chrome. The office rows are
 // validated separately (see departmentLayoutOfficesSchema) because the

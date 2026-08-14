@@ -248,6 +248,15 @@ export const getAboutMechaClub = cache(async () => {
   return prisma.aboutMechaClub.findUnique({ where: { id: 'singleton' } });
 });
 
+// /student-society/service-charter — chrome plus the service cards in
+// display order.
+export const getServiceCharter = cache(async () => {
+  return prisma.serviceCharter.findUnique({
+    where: { id: 'singleton' },
+    include: { items: { orderBy: { displayOrder: 'asc' } } },
+  });
+});
+
 // /about/department-layout — chrome plus the office rows in display
 // order, so the page renders the table without re-sorting.
 export const getDepartmentLayout = cache(async () => {

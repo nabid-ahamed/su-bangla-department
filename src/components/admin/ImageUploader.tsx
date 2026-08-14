@@ -47,7 +47,9 @@ type Kind =
   | 'home-overview-image'
   // Department layout plan — cover image + printable PDF
   | 'department-layout-cover'
-  | 'department-layout-pdf';
+  | 'department-layout-pdf'
+  // Student-society service charter PDF
+  | 'service-charter-pdf';
 
 // Per-kind ideal upload size hint, surfaced under every image field
 // so admins have a target before opening the file picker. null = no
@@ -82,6 +84,7 @@ const RECOMMENDED_SIZE_BY_KIND: Record<Kind, string | null> = {
   'home-overview-image':   'Landscape · 1600×900',
   'department-layout-cover': 'Portrait · 3:4 · 600×800 (rendered uncropped)',
   'department-layout-pdf':   null,
+  'service-charter-pdf':     null,
 };
 
 export type UploadMeta = {

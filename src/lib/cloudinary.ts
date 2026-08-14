@@ -75,6 +75,8 @@ const KIND_TO_SUBFOLDER: Record<string, string> = {
   // (the PDF field uses the /auto/upload endpoint like 'syllabus-pdf').
   'department-layout-cover': 'department-layout/covers',
   'department-layout-pdf':   'department-layout/pdfs',
+  // Student-society service charter PDF.
+  'service-charter-pdf':     'service-charter/pdfs',
 };
 
 function folderFor(kind: string): string {
