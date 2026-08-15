@@ -25,7 +25,7 @@ A modern  site for the Mechanical Engineering department at Sonargaon University
 └── package.json
 ```
 
-## Adding a New Page
+## Adding a New Page.
 
 Create a folder under `src/app/`:
 
