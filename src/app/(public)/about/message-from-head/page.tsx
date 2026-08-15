@@ -15,7 +15,7 @@ export const metadata = {
     'Welcome message from the Head of the Department of Bangla, Sonargaon University.',
 };
 
-const FALLBACK_HERO = '/assets/message-from-head-hero.webp';
+const FALLBACK_HERO = '/assets/message-from-head-hero-v3.webp';
 
 export default async function MessageFromHeadPage() {
   const [head, dept, uni] = await Promise.all([

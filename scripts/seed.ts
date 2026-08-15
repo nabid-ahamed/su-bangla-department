@@ -245,7 +245,7 @@ async function seedFaculty() {
             messagePhotoUrl: '/assets/head-mostofa-hossain.webp',
             messageTitleLine1: 'Head of the Department',
             messageTitleLine2: 'Department of Mechanical Engineering',
-            messageHeroImageUrl: '/assets/message-from-head-hero.webp',
+            messageHeroImageUrl: '/assets/message-from-head-hero-v3.webp',
             messageHeroImageVerticalPercent: 0,
           }
         : {};
